@@ -7,7 +7,7 @@ const rand = (min, max) => Math.random() * (max - min) + min;
 
 /* ====== CONFIG EDITABLE ====== */
 const CANVAS_LINK =
-  "https://www.canva.com/design/DAG2w3RKm9A/svHCUSdrYPaiAJ560GicNA/edit?ui=e30";
+  "https://open.spotify.com/playlist/7uyh0SmhIhVU5413Pd7hG1?si=b9b4ad39e78c4fc5&pt=5dd43e32c5a0146057e243b5f93b18fa";
 
 /* 🎵 PLAYLIST (asegúrate que existan en public/music/) */
 const PLAYLIST = [
