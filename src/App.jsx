@@ -928,21 +928,6 @@ export default function App() {
             <EnvelopeLetter onAcceptedYes={triggerCelebration} />
           </div>
 
-          <div className="grid">
-            <section className="glass section">
-              <h3 style={{ marginTop: 0 }}>Un poquito de cómo me haces sentir</h3>
-              <p style={{ margin: 0, color: "rgba(255,255,255,.94)" }}></p>
-            </section>
-            <section className="glass section">
-              <h3 style={{ marginTop: 0 }}>Lo que hemos vivido</h3>
-              <p style={{ margin: 0, color: "rgba(255,255,255,.94)" }}></p>
-            </section>
-            <section className="glass section">
-              <h3 style={{ marginTop: 0 }}>Lo que nos espera</h3>
-              <p style={{ margin: 0, color: "rgba(255,255,255,.94)" }}></p>
-            </section>
-          </div>
-
           <div className="footer">
             <div className={`love ${showCelebration ? "love-glow" : ""}`}>
               TE AMO KEREN
