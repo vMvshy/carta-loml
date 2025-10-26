@@ -64,9 +64,9 @@ Sinceramente pensaba tener esto listo para el 23 pero se me paso el tiempo jeje,
     // slide propuesta 💍
     title: "KEREN ABIGAIL CARDONA VIDEA💜",
     text: `Despues de todo esto que te dije creo que ya no hace falta adivinarlo jajaja, pero igual te lo digo claro…
-Keren, quiero que seas mi novia, ya creo que es hora de que lo nuestro se vuelva oficial.
+Keren, ya creo que es hora de que lo nuestro se vuelva oficial.
 Quiero seguir haciendote reir, apoyarte, y con Diosito, vivir todo eso que siempre hablamos, pero de verdad, juntos.
-Seguir creciendo contigo, y seguir creando momentos que solo tengan sentido contigo, porque no me imagino todo esto con nadie mas...`,
+Seguir creciendo contigo, y seguir creando momentos que solo tengan sentido contigo, porque no me imagino todo esto con nadie mas... Así que amor… desde el fondo de mi corazón, con todo lo que siento por ti…`,
     isProposal: true,
     isProposalTitle: true, // <- título glowing
     leftImages: ["/imagenes/AxJ-DuoSupra.png"],
