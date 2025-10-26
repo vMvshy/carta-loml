@@ -1,0 +1,892 @@
+:root{
+  --bg1:#2a0a4a; --bg2:#4b1a78; --glass: rgba(255,255,255,.12);
+  --border: rgba(255,255,255,.25); --txt: #fff;
+  --mauve:#a78bfa; --fuschia:#e879f9; --deep:#3b0764;
+}
+
+/* base */
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  color:var(--txt); background: radial-gradient(1200px 800px at 50% 0%, #3b0764, #220435 60%, #140222);
+  overflow-x:hidden;
+}
+
+/* fondo animado */
+.bg{position:fixed; inset:-20% -10% 0 -10%; z-index:-2;}
+.bg .gradient{
+  width:100%; height:100%;
+  background:
+    radial-gradient(700px 500px at 20% 10%, rgba(167,139,250,.35), transparent 60%),
+    radial-gradient(900px 700px at 80% 0%, rgba(232,121,249,.25), transparent 60%),
+    linear-gradient(180deg, var(--bg1), var(--bg2));
+  filter: blur(20px);
+}
+.dots{
+  position:fixed; inset:0; z-index:-1;
+  background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(600px 500px at 50% 20%, #000, transparent 70%);
+}
+
+/* ===== Escenario revelable ===== */
+.stage{ transition: filter .35s ease, transform .35s ease, opacity .35s ease; }
+.stage.conceal{
+  filter: blur(12px) brightness(.65) saturate(.85);
+  transform: scale(.99);
+  pointer-events: none;   /* no se puede clickear nada hasta abrir el regalo */
+  user-select: none;
+}
+
+/* container */
+.container{max-width: 1000px; margin: 0 auto; padding: 24px 18px 80px;}
+.row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.badge{
+  padding:8px 12px; border-radius:999px; border:1px solid var(--border);
+  background:var(--glass); font-weight:700; box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+.badge .small{font-weight:600; opacity:.85}
+.title{font-size:clamp(28px, 6vw, 42px); margin:8px 0 6px; font-weight:900;}
+.lead{margin:0 0 6px; opacity:.92}
+
+/* glass card */
+.glass{
+  background:var(--glass); border:1px solid var(--border);
+  border-radius:24px; box-shadow:0 25px 60px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.section{padding:18px}
+
+/* grid */
+.grid{display:grid; gap:14px; margin-top:20px}
+@media (min-width:900px){ .grid{ grid-template-columns: 1fr 1fr 1fr; } }
+
+/* footer */
+.footer{
+  display:flex; justify-content:center; align-items:center;
+  min-height: 60px; margin-top:26px;
+}
+.love{
+  padding:14px 22px; border-radius:999px; border:1px solid var(--border);
+  background: linear-gradient(90deg, #a855f7, #7c3aed); font-weight:900;
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+}
+
+/* collage */
+.collage{position:fixed; inset:0; pointer-events:none;}
+.frame{
+  position:absolute; width:220px; height:220px; border-radius:16px; overflow:hidden;
+  border:1px solid rgba(255,255,255,.3); box-shadow:0 20px 40px rgba(0,0,0,.45);
+}
+.frame img{width:100%; height:100%; object-fit:cover}
+
+/* música */
+.controls{position:fixed; top:16px; right:16px; z-index:50; display:flex; gap:8px; align-items:center}
+.btn{
+  border:1px solid var(--border); background:var(--glass); color:#fff;
+  border-radius:999px; padding:8px 12px; cursor:pointer; backdrop-filter: blur(6px);
+}
+.panel{
+  margin-left:6px; padding:8px 12px; display:flex; gap:10px; align-items:center;
+}
+.panel input[type="range"]{width:160px}
+
+/* ===== Sobre + Carta ===== */
+.letter-wrap{ display:flex; justify-content:center; }
+.envelope{
+  position: relative;
+  width: min(920px, 92vw);
+  height: 320px;
+  border-radius: 24px;
+  background: linear-gradient(120deg, rgba(124,58,237,.28), rgba(167,139,250,.22));
+  border: 1px solid rgba(255,255,255,.25);
+  box-shadow: 0 25px 60px rgba(0,0,0,.35);
+  cursor: pointer;
+  perspective: 1200px;
+}
+.envelope.open{ cursor: default; }
+
+.flap{
+  position:absolute; left:0; right:0; top:0; height: 55%;
+  transform-origin: top center; border-radius: 24px 24px 0 0;
+  background: radial-gradient(circle at 50% 20%, rgba(240,171,252,.6), rgba(124,58,237,.55) 60%, rgba(91,29,134,.8));
+  border-bottom: 1px solid rgba(255,255,255,.28);
+  box-shadow: inset 0 -20px 40px rgba(0,0,0,.25);
+}
+
+.paper-shadow{
+  position:absolute; inset: 10px 10px 10px 10px; border-radius: 20px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.2), inset 0 18px 40px rgba(0,0,0,.2);
+}
+
+/* Carta interna */
+.letter{ position:absolute; inset: 14px; border-radius: 18px; padding: 18px; }
+.letter-inner{ display:grid; grid-template-columns: 1fr minmax(0, 1.6fr) 1fr; gap:16px; }
+
+.letter-title{ margin: 8px 0 6px; font-weight: 900; font-size: clamp(22px, 3.2vw, 28px); }
+.letter-text{ margin:0; color: rgba(255,255,255,.94); line-height:1.65; }
+
+.letter-side{ display:flex; align-items:flex-start; justify-content:center; }
+.slot{ position:relative; width: 100%; min-height: 120px; }
+.letter-photo{
+  position:absolute; width: 120px; height: 120px; object-fit: cover;
+  border-radius: 14px; border:1px solid rgba(255,255,255,.28);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  top: 0; left: 0; transform: translate(8px, 6px) rotate(-4deg);
+}
+.letter-side.right .letter-photo{ left:auto; right:0; transform: translate(-8px, 6px) rotate(4deg); }
+
+.letter-nav{ margin-top: 14px; display:flex; align-items:center; justify-content:space-between; }
+.letter-nav .dots{ display:flex; gap:8px; }
+
+.final-action{ margin-top: 14px; display:flex; align-items:center; justify-content:center; }
+.heart-link{
+  display:inline-flex; align-items:center; gap:12px; padding:10px 16px;
+  border-radius:999px; background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.25); color:#fff; text-decoration:none;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+.heart-link .heart{ font-size:18px; display:inline-block; transition: transform .18s ease; }
+.heart-link:hover .heart{ transform: scale(1.25); }
+.heart-link .msg{ font-weight:700; }
+.heart-link .mini-hearts{ opacity:.85; font-size:12px; letter-spacing:4px; }
+
+/* Confetti + corazones de mouse */
+.confettiLayer{ position:fixed; inset:0; pointer-events:none; z-index:60; }
+.confetti{
+  position:absolute; width:10px; height:10px; transform: translate(0,0) rotate(0);
+  animation: confetti var(--t) ease-out forwards; will-change: transform, opacity;
+}
+.confetti.circle{ border-radius:999px; }
+.piece{
+  position: relative; width: 12px; height: 12px; color: #a855f7;
+}
+.piece::before, .piece::after{
+  content:""; position:absolute; width:50%; height:80%; background: currentColor; border-radius:50% 50% 0 0;
+}
+.piece::before{ left:0; transform: rotate(-45deg) translate(0, 10%); transform-origin: right bottom; }
+.piece::after{ right:0; transform: rotate(45deg) translate(0, 10%);  transform-origin: left bottom; }
+@keyframes confetti{
+  to{ transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(var(--s)); opacity:0; }
+}
+
+.heartsLayer{ position:fixed; inset:0; pointer-events:none; z-index:55; }
+.heart{ position:absolute; transform: translate(-50%, -50%); animation: float .9s ease-out forwards; }
+@keyframes float{ to{ transform: translate(-50%, -140%); opacity:0; } }
+
+/* ===== Portal estrellado ===== */
+.portalOverlay{
+  position:fixed; inset:0; z-index:70;
+  background: radial-gradient(1200px 1200px at 50% 60%, rgba(42,0,70,.42), rgba(10,0,20,.85) 60%, rgba(5,0,10,.97) 100%);
+  overflow:hidden;
+}
+.starDot{
+  position:absolute; width:2px; height:2px; background:#c4b5fd; border-radius:50%;
+  box-shadow: 0 0 8px rgba(167,139,250,.85);
+}
+.petal{
+  position:fixed; top:-8vh;
+  background: #a78bfa;
+  border-radius: 60% 40% 60% 40% / 60% 60% 40% 40%;
+  opacity:.75;
+  filter: drop-shadow(0 2px 8px rgba(124,58,237,.35));
+}
+.portalHalo{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width: 520px; height: 520px; border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(232,121,249,.12), rgba(124,58,237,.25), rgba(232,121,249,.12));
+  filter: blur(32px);
+  pointer-events:none;
+}
+
+/* Botón circular (sin saltos) + hover brillo */
+.portalCore{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width: 220px; height: 220px; border-radius:50%;
+  background: radial-gradient(circle at 50% 40%, #7c3aed 0%, #5b1d86 55%, #3b0764 100%);
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow:
+    0 0 0 10px rgba(124,58,237,.25),
+    0 20px 60px rgba(0,0,0,.6),
+    inset 0 0 40px rgba(232,121,249,.25);
+  display:grid; place-items:center; cursor:pointer;
+  will-change: filter;
+  transition: filter .18s ease, box-shadow .18s ease;
+}
+.portalCore:hover{
+  filter: drop-shadow(0 0 18px rgba(240,171,252,.55));
+  box-shadow:
+    0 0 0 12px rgba(124,58,237,.32),
+    0 28px 70px rgba(0,0,0,.7),
+    inset 0 0 46px rgba(232,121,249,.32);
+}
+.no-jump{ transform-origin:center center; }
+
+.portalCore .heartLock{ width: 90px; height: 90px; filter: drop-shadow(0 4px 14px rgba(168,85,247,.45)); }
+.portalCore .ring{
+  position:absolute; inset:0; border-radius:50%;
+  border:2px solid rgba(240,171,252,.85);
+  box-shadow: 0 0 22px rgba(240,171,252,.65), inset 0 0 22px rgba(167,139,250,.45);
+  pointer-events:none;
+}
+.portalFog{
+  position:absolute; inset:-20%;
+  background: radial-gradient(800px 800px at 48% 52%, rgba(124,58,237,.18), transparent 60%),
+              radial-gradient(1000px 800px at 60% 40%, rgba(232,121,249,.12), transparent 70%);
+  filter: blur(40px); pointer-events:none;
+}
+
+/* ==== Pulso suave del botón circular (halo) ==== */
+.portalCore::after{
+  content:"";
+  position:absolute; inset:-18px; border-radius:50%;
+  border:2px solid rgba(240,171,252,.35);
+  filter: blur(6px);
+  opacity: 0; pointer-events:none;
+  animation: gentlePulse 2.8s ease-in-out infinite;
+}
+@keyframes gentlePulse{
+  0%   { transform: scale(0.92); opacity: 0;   }
+  50%  { transform: scale(1.10); opacity: .38; }
+  100% { transform: scale(0.92); opacity: 0;   }
+}
+@keyframes ringBreathe{
+  0% { box-shadow: 0 0 22px rgba(240,171,252,.65), inset 0 0 22px rgba(167,139,250,.45); }
+  50%{ box-shadow: 0 0 28px rgba(240,171,252,.85), inset 0 0 28px rgba(167,139,250,.65); }
+  100%{ box-shadow: 0 0 22px rgba(240,171,252,.65), inset 0 0 22px rgba(167,139,250,.45); }
+}
+.portalCore .ring{ animation: ringBreathe 4s ease-in-out infinite; }
+
+
+
+
+/* --- Carta auto-resize + transición tipo acordeón al abrir --- */
+
+/*
+Explicación rápida técnica:
+- En CSS no se puede animar height: auto;
+- Truco: animamos max-height.
+- Cerrada -> max-height pequeña (alto del sobre cerrado)
+- Abierta -> max-height grande (ej. 90vh)
+- overflow:hidden evita que se vea el contenido antes de tiempo.
+*/
+
+/* estado base del sobre (cerrado) */
+.envelope{
+  position: relative;
+  /* lo que tenías antes, pero cambiamos a max-height en vez de height fija */
+  max-height: 340px;          /* "alto del sobre" cerrado */
+  min-height: 320px;          /* altura mínima para que se vea como sobre */
+  overflow: hidden;           /* oculta la carta que está adentro */
+  transition:
+    max-height .45s cubic-bezier(.22,.95,.5,1.2),
+    padding .28s ease,
+    box-shadow .28s ease,
+    background .28s ease;
+  padding-bottom: 0;          /* sin padding extra cerrada */
+}
+
+/* cuando está abierta */
+.envelope.open{
+  /* le damos espacio casi pantalla completa, se ve como que se estira */
+  max-height: 90vh;
+  padding-bottom: 16px;
+  overflow: visible;          /* ya puede verse libre la carta */
+}
+
+/* la "sombra/papel" del sobre */
+.paper-shadow{
+  position:absolute;
+  inset:14px;
+  border-radius:20px;
+  background: radial-gradient(circle at 50% 30%,rgba(255,255,255,.07) 0%,rgba(0,0,0,0) 70%);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.8),
+    0 0 60px rgba(168,85,247,.25);
+  border:1px solid rgba(255,255,255,.18);
+  pointer-events:none;
+}
+/* Cuando la carta está abierta, dejamos que la sombra se “acomode” al contenido */
+.envelope.open .paper-shadow{
+  inset:10px;
+  height:auto;
+}
+
+/* tapa del sobre (ya la tenías), la dejamos igual */
+.flap{
+  position:absolute;
+  left:0; right:0;
+  top:0;
+  height:50%;
+  transform-origin: top center;
+  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.18) 0%, rgba(0,0,0,0) 70%);
+  background-color: rgba(18,0,30,.6);
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow: 0 30px 80px rgba(0,0,0,.9), 0 0 40px rgba(168,85,247,.4);
+  backdrop-filter: blur(10px) brightness(1.2);
+}
+
+/* carta interna */
+.letter{
+  /* IMPORTANTE:
+     Cuando está cerrada, la carta vive "encajada" y clipped dentro del sobre.
+     Cuando se abre, la sacamos del modo absolute para que pueda crecer
+     libremente con el texto. */
+  position:absolute;
+  inset:14px;
+
+  border-radius:20px;
+  background:rgba(20,0,40,.55);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.8),
+    0 0 60px rgba(168,85,247,.3);
+  border:1px solid rgba(255,255,255,.22);
+
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  overflow:hidden; /* mientras está en modo "cerrado"/abriendo */
+  max-height:100%; /* respeta el clip inicial */
+}
+
+/* una vez abierto, la carta entra al flujo normal y puede crecer todo lo que necesite */
+.envelope.open .letter{
+  position:relative;
+  inset:auto;
+
+  /* ahora que la carta es libre, dejamos que se expanda.
+     Para pantallas grandes, podemos limitarla un poco con max-height + scroll interno
+     si quieres. (Si NO quieres scroll nunca, comenta max-height/overflow.) */
+  max-height: 80vh;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+/* contenido principal de la carta */
+.letter-inner{
+  display:grid;
+  grid-template-columns: 120px 1fr 120px;
+  gap:16px;
+  padding:20px 20px 16px;
+}
+
+/* columnas laterales para las fotos inclinadas */
+.letter-side{
+  position:relative;
+}
+.slot{
+  position:relative;
+  width:100%;
+  min-height:120px;
+}
+.letter-photo{
+  position:absolute;
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+  top:0;
+  left:0;
+  transform:translate(8px,6px) rotate(-4deg);
+}
+.letter-side.right .letter-photo{
+  left:auto;
+  right:0;
+  transform:translate(-8px,6px) rotate(4deg);
+}
+
+/* texto */
+.letter-content{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  color:#fff;
+  font-size:.95rem;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+.letter-title{
+  margin:0 0 .5rem 0;
+  font-size:1.05rem;
+  font-weight:700;
+  color:#fff;
+  text-shadow:0 0 12px rgba(255,255,255,.4);
+}
+.letter-text{
+  margin:0;
+  color:rgba(255,255,255,.9);
+  font-weight:400;
+}
+
+/* zona final con corazoncito (link al canvas) */
+.final-action{
+  margin-top:16px;
+  text-align:center;
+}
+.heart-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:16px;
+  padding:10px 16px;
+  box-shadow:0 20px 40px rgba(0,0,0,.4),0 0 20px rgba(232,121,249,.4);
+  color:#fff;
+  font-weight:600;
+  font-size:.9rem;
+  text-decoration:none;
+  cursor:pointer;
+  position:relative;
+  transition:transform .15s ease;
+}
+.heart-link:hover{
+  transform:scale(1.05);
+}
+.heart{
+  font-size:1rem;
+}
+.mini-hearts{
+  font-size:.8rem;
+  opacity:.8;
+}
+.msg{
+  white-space:nowrap;
+  font-weight:600;
+}
+
+/* navegación abajo de la carta */
+.letter-nav{
+  padding:12px 16px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:.8rem;
+  color:#fff;
+}
+.letter-nav .dots{
+  display:flex;
+  gap:8px;
+}
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+}
+
+/* proposal (sí / no que huye) */
+.proposal-area{
+  position:relative;
+  margin-top:16px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08);
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.4),
+    inset 0 0 20px rgba(167,139,250,.3);
+  padding:20px;
+  text-align:center;
+  color:#fff;
+  font-weight:600;
+  line-height:1.4;
+}
+.proposal-area .proposal-question{
+  font-size:1.1rem;
+  font-weight:700;
+  margin-bottom:12px;
+  color:#fff;
+  text-shadow:0 0 12px rgba(255,255,255,.4), 0 0 40px rgba(232,121,249,.3);
+}
+.proposal-buttons-box{
+  position:relative;
+  width:100%;
+  height:120px;
+  max-width:260px;
+  margin:0 auto;
+}
+.btn-yes,
+.btn-no{
+  position:absolute;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.25);
+  color:#fff;
+  font-weight:800;
+  padding:10px 16px;
+  cursor:pointer;
+  font-size:.9rem;
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.35),
+    0 0 20px rgba(0,0,0,.4);
+  user-select:none;
+}
+.btn-yes{
+  left:10%;
+  top:50%;
+  transform:translateY(-50%);
+  background:linear-gradient(90deg,#a855f7,#7c3aed);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.35),
+    0 0 20px rgba(232,121,249,.4);
+}
+.btn-no{
+  background:rgba(255,255,255,.12);
+  transform:translate(-50%,-50%);
+}
+.proposal-hint{
+  font-size:.8rem;
+  font-weight:400;
+  opacity:.8;
+  margin-top:12px;
+}
+
+/* corazón sellando el sobre antes de abrir */
+.wax-seal{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.4) 0%,rgba(232,121,249,.2) 30%,rgba(98,0,128,.8) 60%);
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.8),
+    0 0 30px rgba(232,121,249,.6);
+  border:1px solid rgba(255,255,255,.3);
+  color:#fff;
+  font-weight:700;
+  font-size:1.2rem;
+  line-height:64px;
+  text-align:center;
+  cursor:pointer;
+  pointer-events:none; /* el click lo recibe el sobre, no el sello */
+}
+
+/* responsive:
+   - en pantallas pequeñas escondemos las columnas laterales con fotos
+   - la carta es 1 sola columna → menos ancho perdido → menos altura final necesaria */
+@media (max-width: 860px){
+  .letter-inner{
+    grid-template-columns: 1fr !important;
+  }
+  .letter-side{
+    display:none !important;
+  }
+
+  /* hacemos el sobre adaptarse mejor en móvil:
+     menos altura inicial cerrada */
+  .envelope{
+    max-height: 280px;
+    min-height: 260px;
+  }
+  .envelope.open{
+    max-height: 90vh; /* sigue abriéndose en acordeón */
+  }
+}
+
+
+
+/* ========== OVERLAY CUANDO DICE QUE SÍ 💜 ========== */
+
+.yes-overlay{
+  position:fixed;
+  inset:0;
+  z-index:120; /* encima de todo */
+  background:
+    radial-gradient(circle at 50% 40%, rgba(124,58,237,.55) 0%, rgba(32,0,48,.9) 60%, rgba(10,0,20,1) 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  padding:24px;
+  text-align:center;
+  cursor:pointer; /* para que pueda cerrarlo */
+  animation: yesFadeIn .4s ease-out forwards;
+  color:#fff;
+  font-family: inherit;
+}
+
+@keyframes yesFadeIn{
+  0%{ opacity:0; }
+  100%{ opacity:1; }
+}
+
+/* corazoncitos flotando en el overlay */
+.yes-hearts-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.yes-heart{
+  position:absolute;
+  bottom:10vh;
+  transform:translate(-50%,0) scale(.8);
+  color:#e879f9;
+  filter:
+    drop-shadow(0 0 10px rgba(232,121,249,.6))
+    drop-shadow(0 0 30px rgba(167,139,250,.4));
+  animation-name: yesFloatUp;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes yesFloatUp{
+  0%{
+    opacity:0;
+    transform: translate(-50%,0) scale(.8) rotate(-8deg);
+  }
+  10%{
+    opacity:1;
+  }
+  50%{
+    transform: translate(-50%,-80px) scale(1) rotate(6deg);
+  }
+  100%{
+    opacity:0;
+    transform: translate(-50%,-140px) scale(1.1) rotate(-4deg);
+  }
+}
+
+/* tarjetita central del "Sí" */
+.yes-card{
+  position:relative;
+  background: rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:24px;
+  padding:24px 28px 20px;
+  max-width:90%;
+  width:320px;
+  box-shadow:
+    0 40px 120px rgba(0,0,0,.8),
+    0 0 60px rgba(232,121,249,.6),
+    0 0 160px rgba(124,58,237,.4);
+  text-shadow:
+    0 0 12px rgba(255,255,255,.6),
+    0 0 40px rgba(232,121,249,.4);
+  z-index:2;
+}
+
+.yes-title{
+  font-size:1.25rem;
+  font-weight:800;
+  margin:0 0 .5rem 0;
+  color:#fff;
+}
+
+.yes-desc{
+  margin:0;
+  font-size:.9rem;
+  line-height:1.45;
+  color:rgba(255,255,255,.92);
+  font-weight:500;
+}
+
+.yes-mini-hint{
+  margin-top:12px;
+  font-size:.75rem;
+  font-weight:400;
+  color:rgba(255,255,255,.7);
+  text-shadow:none;
+  opacity:.9;
+}
+
+
+/* --- Título especial del slide de la propuesta --- */
+
+.proposal-title-wrap {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.proposal-title-glow {
+  background: radial-gradient(
+    circle at 50% 30%,
+    rgba(168,85,247,0.18) 0%,
+    rgba(0,0,0,0) 70%
+  );
+  border-radius: 1rem;
+  padding: 0.75rem 1rem 0.9rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 24px rgba(168,85,247,.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  max-width: 320px;
+  width: 100%;
+}
+
+.proposal-name-row {
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1.3;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(236,72,153,.6),
+               0 0 20px rgba(147,51,234,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.proposal-name-text {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.proposal-heart-mini {
+  font-size: .9rem;
+  line-height: 1;
+  color: #e879f9;
+  filter: drop-shadow(0 0 6px rgba(232,121,249,.8));
+}
+
+.proposal-subtext {
+  margin-top: .4rem;
+  font-size: .8rem;
+  line-height: 1.2rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  text-align: center;
+  text-shadow: 0 0 6px rgba(168,85,247,.6);
+}
+
+
+/* ===== CELEBRATION MODE (45s después del "Sí") ===== */
+
+/* Cambia el ambiente: más brillo rosado/morado */
+.stage.celebration {
+  /* gradiente un poquito más vivo */
+  background: radial-gradient(
+    circle at 50% 30%,
+    rgba(236,72,153,0.18) 0%,
+    rgba(168,85,247,0.12) 40%,
+    rgba(17,6,40,0) 70%
+  );
+  box-shadow: 0 0 40px rgba(236,72,153,0.4),
+              0 0 120px rgba(168,85,247,0.3) inset;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+/* Hace que TE AMO KEREN lata y brille */
+.love-glow {
+  animation: lovePulse 2s infinite ease-in-out;
+  text-shadow:
+    0 0 10px rgba(236,72,153,0.8),
+    0 0 20px rgba(168,85,247,0.6),
+    0 0 40px rgba(168,85,247,0.4);
+  color: #fff;
+}
+
+@keyframes lovePulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* Capa flotante con tulipanes / corazones */
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 400; /* por encima de la carta pero debajo del portal "sí"? */
+}
+
+/* Glow suave encima */
+.celebration-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(236,72,153,0.25) 0%,
+    rgba(0,0,0,0) 70%
+  );
+  filter: blur(60px);
+  opacity: 0.7;
+}
+
+/* cositas flotando */
+.float-thing {
+  position: absolute;
+  top: 0;
+  font-size: 14px;
+  line-height: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 6px rgba(168,85,247,0.6));
+  opacity: 0;
+}
+
+/* corazón flotante */
+.heart-shape {
+  background: radial-gradient(circle at 30% 30%, #ff8bf5 0%, #bd4bff 60%);
+  width: 28px;
+  height: 28px;
+  position: relative;
+  border-radius: 4px;
+  transform: rotate(-45deg);
+}
+.heart-shape:before,
+.heart-shape:after {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle at 30% 30%, #ff8bf5 0%, #bd4bff 60%);
+  border-radius: 50%;
+}
+.heart-shape:before {
+  top: -14px;
+  left: 0;
+}
+.heart-shape:after {
+  left: 14px;
+  top: 0;
+}
+
+/* tulipán flotante mini (simplificado estilo pétalo morado con tallo) */
+.tulip-shape {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+.tulip-shape::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle at 30% 30%, #c084fc 0%, #6d28d9 70%);
+  border-radius: 50% 50% 40% 40%;
+  box-shadow: 0 0 8px rgba(192,132,252,.7),
+              0 0 16px rgba(168,85,247,.4);
+}
+.tulip-shape::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 20px;
+  width: 2px;
+  height: 14px;
+  background: linear-gradient(#4ade80 0%, #15803d 100%);
+  border-radius: 2px;
+}
+
+/* (Las classes .proposal-title-glow, etc., ya estaban; las de celebración son nuevas) */
