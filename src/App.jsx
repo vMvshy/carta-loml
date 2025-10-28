@@ -162,7 +162,7 @@ function StarField() {
 
 /* 🎀 STICKERS flotando suave en su sitio (fondo, más pequeños) */
 function StickerLayer() {
-  // Los generamos una sola vez para que no cambien de lugar cada render
+  // guardamos las posiciones para que no cambien en cada render
   const stickersRef = useRef(
     Array.from({ length: 8 }).map(() => {
       const src =
@@ -170,14 +170,14 @@ function StickerLayer() {
 
       return {
         id: crypto.randomUUID(),
-        xStart: rand(0, 100), // posición inicial random en la pantalla
+        xStart: rand(0, 100),
         yStart: rand(0, 100),
-        driftX: rand(-15, 15), // movimiento lateral suave
-        driftY: rand(-15, 15), // movimiento vertical suave
-        rot0: rand(-8, 8), // rotación inicial
-        rot1: rand(-14, 14), // rotación extra
-        size: rand(40, 70), // MÁS PEQUEÑOS
-        dur: rand(8, 12), // velocidad del vaivén
+        driftX: rand(-15, 15),
+        driftY: rand(-15, 15),
+        rot0: rand(-8, 8),
+        rot1: rand(-14, 14),
+        size: rand(40, 70), // ya chiquitos
+        dur: rand(8, 12),
         delay: rand(0, 4),
         src,
       };
@@ -262,7 +262,7 @@ function Collage() {
 }
 
 /* Música */
-function MusicControl({ audioRef }) {
+function MusicControl({ audioRef, onPrevTrack, onNextTrack }) {
   const [open, setOpen] = useState(false);
   const [vol, setVol] = useState(0.5);
   const [playing, setPlaying] = useState(false);
@@ -318,6 +318,7 @@ function MusicControl({ audioRef }) {
             exit={{ opacity: 0, x: 12 }}
             transition={{ type: "spring", stiffness: 220, damping: 20 }}
           >
+            {/* volumen */}
             🔊{" "}
             <input
               type="range"
@@ -326,11 +327,46 @@ function MusicControl({ audioRef }) {
               step={0.01}
               value={vol}
               onChange={(e) => setVol(parseFloat(e.target.value))}
+              style={{ width: "110px" }}
             />
 
-            <button className="btn" onClick={onTogglePlayPause}>
-              {playing ? "Pausa" : "Reproducir"}
-            </button>
+            {/* controles de track */}
+            <div
+              style={{
+                display: "flex",
+                gap: "6px",
+                alignItems: "center",
+                marginTop: "8px",
+                justifyContent: "center",
+              }}
+            >
+              {/* anterior */}
+              <button
+                className="btn"
+                style={{ padding: "6px 10px" }}
+                onClick={onPrevTrack}
+              >
+                {"<"}
+              </button>
+
+              {/* play / pausa */}
+              <button
+                className="btn"
+                style={{ padding: "6px 10px" }}
+                onClick={onTogglePlayPause}
+              >
+                {playing ? "||" : "▶"}
+              </button>
+
+              {/* siguiente */}
+              <button
+                className="btn"
+                style={{ padding: "6px 10px" }}
+                onClick={onNextTrack}
+              >
+                {">"}
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -534,7 +570,9 @@ function EnvelopeLetter({ onAcceptedYes }) {
                           alt="recuerdo"
                           className="letter-photo"
                           style={{
-                            rotate: `${(Math.random() * 10 - 5).toFixed(2)}deg`,
+                            rotate: `${(Math.random() * 10 - 5).toFixed(
+                              2
+                            )}deg`,
                           }}
                         />
                       ))}
@@ -612,7 +650,9 @@ function EnvelopeLetter({ onAcceptedYes }) {
                           alt="recuerdo"
                           className="letter-photo"
                           style={{
-                            rotate: `${(Math.random() * 10 - 5).toFixed(2)}deg`,
+                            rotate: `${(Math.random() * 10 - 5).toFixed(
+                              2
+                            )}deg`,
                           }}
                         />
                       ))}
@@ -947,7 +987,7 @@ export default function App() {
   const [showGift, setShowGift] = useState(true);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  // set initial song + autoplay
+  // cargar / reproducir canción actual cuando cambie trackIndex
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
@@ -973,12 +1013,27 @@ export default function App() {
     };
   }, []);
 
-  // cuando diga que sí -> celebración 45s
+  // celebración 45s cuando ella dice que sí 💜
   const triggerCelebration = () => {
     setShowCelebration(true);
     setTimeout(() => {
       setShowCelebration(false);
     }, 45000);
+  };
+
+  // *** NUEVO: siguiente / anterior canción ***
+  const nextTrack = () => {
+    setTrackIndex((i) => {
+      const n = i + 1;
+      return n >= PLAYLIST.length ? 0 : n;
+    });
+  };
+
+  const prevTrack = () => {
+    setTrackIndex((i) => {
+      const n = i - 1;
+      return n < 0 ? PLAYLIST.length - 1 : n;
+    });
   };
 
   return (
@@ -1002,7 +1057,11 @@ export default function App() {
         <Collage />
 
         {/* control música flotante */}
-        <MusicControl audioRef={audioRef} />
+        <MusicControl
+          audioRef={audioRef}
+          onPrevTrack={prevTrack}
+          onNextTrack={nextTrack}
+        />
 
         {/* contenido central */}
         <main className="container">
