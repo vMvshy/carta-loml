@@ -7,14 +7,19 @@ const rand = (min, max) => Math.random() * (max - min) + min;
 
 /* ====== CONFIG EDITABLE ====== */
 const CANVAS_LINK =
-  "https://open.spotify.com/playlist/7uyh0SmhIhVU5413Pd7hG1?si=b9b4ad39e78c4fc5&pt=5dd43e32c5a0146057e243b5f93b18fa";
+  "https://open.spotify.com/playlist/7uyh0SmhIhVU5413Pd7hG1?si=c51513c6d1584cf6&pt=d3035a772b0d0f9020b66edf8f535af0";
 
-/* 🎵 PLAYLIST (asegúrate que existan en public/music/) */
-const PLAYLIST = [
-  "/music/nuestracancion.mp3",
-  "/music/segunda.mp3",
+/* 🎵 PLAYLIST */
+const PLAYLIST = ["/music/llegaste-tu.mp3", "/music/solamente-tu.mp3"];
+
+/* STICKERS QUE VAN FLOTANDO */
+const STICKER_SRCS = [
+  "/stickers/kuromi-heart.png",
+  "/stickers/kuromi-cute.png",
+  "/stickers/harry-fly.png",
 ];
 
+/* FOTOS DEL COLLAGE DE FONDO */
 const BASE = [
   { url: "/imagenes/AxJ-Bar.png", rotate: -8, x: "6%", y: "8%", z: 1 },
   { url: "/imagenes/AxJ-City.png", rotate: 7, x: "70%", y: "12%", z: 2 },
@@ -22,6 +27,7 @@ const BASE = [
   { url: "/imagenes/duocar.png", rotate: -5, x: "72%", y: "62%", z: 1 },
 ];
 
+/* PÁGINAS DE LA CARTA */
 const LETTER_PAGES = [
   {
     title: "Lo que siento por ti",
@@ -61,19 +67,17 @@ Sinceramente pensaba tener esto listo para el 23 pero se me paso el tiempo jeje,
     rightImages: ["/imagenes/bibi.png"],
   },
   {
-    // slide propuesta 💍
     title: "KEREN ABIGAIL CARDONA VIDEA💜",
     text: `Despues de todo esto que te dije creo que ya no hace falta adivinarlo jajaja, pero igual te lo digo claro…
-Keren, ya creo que es hora de que lo nuestro se vuelva oficial.
+Keren, quiero que seas mi novia, ya creo que es hora de que lo nuestro se vuelva oficial.
 Quiero seguir haciendote reir, apoyarte, y con Diosito, vivir todo eso que siempre hablamos, pero de verdad, juntos.
-Seguir creciendo contigo, y seguir creando momentos que solo tengan sentido contigo, porque no me imagino todo esto con nadie mas... Así que amor… desde el fondo de mi corazón, con todo lo que siento por ti…`,
+Seguir creciendo contigo, y seguir creando momentos que solo tengan sentido contigo, porque no me imagino todo esto con nadie mas...`,
     isProposal: true,
-    isProposalTitle: true, // <- título glowing
+    isProposalTitle: true,
     leftImages: ["/imagenes/AxJ-DuoSupra.png"],
     rightImages: ["/imagenes/LOML2.png"],
   },
   {
-    // último slide
     title: "Para ti, solo para ti",
     text: "Cuando termines, toca el corazoncito 💜",
     isFinal: true,
@@ -81,7 +85,6 @@ Seguir creciendo contigo, y seguir creando momentos que solo tengan sentido cont
     rightImages: [],
   },
 ];
-/* ====== FIN CONFIG ====== */
 
 /* Tulip */
 const Tulip = ({ size = 40 }) => (
@@ -122,9 +125,107 @@ const Tulip = ({ size = 40 }) => (
   </svg>
 );
 
-/* Collage */
+/* ⭐ estrellitas de fondo PERMANENTES (detrás de todo) */
+function StarField() {
+  const stars = Array.from({ length: 120 }).map(() => ({
+    id: crypto.randomUUID(),
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    s: 0.6 + Math.random() * 1.2,
+    d: 1.2 + Math.random() * 1.6,
+    o: Math.random(),
+  }));
+
+  return (
+    <div className="starfield-layer">
+      {stars.map((st) => (
+        <motion.span
+          key={st.id}
+          className="bgStarDot"
+          style={{
+            left: `${st.x}vw`,
+            top: `${st.y}vh`,
+            scale: st.s,
+          }}
+          animate={{ opacity: [0.2, 1, 0.2] }}
+          transition={{
+            duration: st.d,
+            repeat: Infinity,
+            delay: st.o,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* 🎀 STICKERS flotando suave en su sitio (fondo, más pequeños) */
+function StickerLayer() {
+  // Los generamos una sola vez para que no cambien de lugar cada render
+  const stickersRef = useRef(
+    Array.from({ length: 8 }).map(() => {
+      const src =
+        STICKER_SRCS[Math.floor(Math.random() * STICKER_SRCS.length)];
+
+      return {
+        id: crypto.randomUUID(),
+        xStart: rand(0, 100), // posición inicial random en la pantalla
+        yStart: rand(0, 100),
+        driftX: rand(-15, 15), // movimiento lateral suave
+        driftY: rand(-15, 15), // movimiento vertical suave
+        rot0: rand(-8, 8), // rotación inicial
+        rot1: rand(-14, 14), // rotación extra
+        size: rand(40, 70), // MÁS PEQUEÑOS
+        dur: rand(8, 12), // velocidad del vaivén
+        delay: rand(0, 4),
+        src,
+      };
+    })
+  );
+
+  return (
+    <div className="stickers-layer">
+      {stickersRef.current.map((st) => (
+        <motion.img
+          key={st.id}
+          src={st.src}
+          className="sticker"
+          style={{
+            left: `${st.xStart}vw`,
+            top: `${st.yStart}vh`,
+            width: st.size + "px",
+            height: "auto",
+          }}
+          initial={{
+            x: 0,
+            y: 0,
+            rotate: st.rot0,
+            opacity: 0.3,
+          }}
+          animate={{
+            x: [0, st.driftX, 0],
+            y: [0, st.driftY, 0],
+            rotate: [st.rot0, st.rot1, st.rot0],
+            opacity: [0.25, 0.4, 0.25],
+            scale: [1, 1.05, 1],
+          }}
+          transition={{
+            duration: st.dur,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: st.delay,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* Collage flotante en el fondo (encima de los stickers) */
 function Collage() {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
     const onMove = (e) =>
       setMouse({
@@ -134,8 +235,9 @@ function Collage() {
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
+
   return (
-    <div className="collage">
+    <div className="collage" style={{ zIndex: 1 }}>
       {BASE.map((p, i) => (
         <motion.div
           key={i}
@@ -166,7 +268,9 @@ function MusicControl({ audioRef }) {
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = vol;
+    if (audioRef.current) {
+      audioRef.current.volume = vol;
+    }
   }, [vol, audioRef]);
 
   useEffect(() => {
@@ -182,7 +286,7 @@ function MusicControl({ audioRef }) {
     };
   }, [audioRef]);
 
-  const onToggle = async () => {
+  const onTogglePlayPause = async () => {
     const a = audioRef.current;
     if (!a) return;
     if (a.paused) {
@@ -200,15 +304,15 @@ function MusicControl({ audioRef }) {
         className="btn"
         onClick={() => {
           setOpen((o) => !o);
-          onToggle();
         }}
       >
-        🎵 <strong></strong>
+        🎵
       </button>
+
       <AnimatePresence>
         {open && (
           <motion.div
-            className="panel glass"
+            className="panel"
             initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 12 }}
@@ -223,7 +327,8 @@ function MusicControl({ audioRef }) {
               value={vol}
               onChange={(e) => setVol(parseFloat(e.target.value))}
             />
-            <button className="btn" onClick={onToggle}>
+
+            <button className="btn" onClick={onTogglePlayPause}>
               {playing ? "Pausa" : "Reproducir"}
             </button>
           </motion.div>
@@ -233,15 +338,14 @@ function MusicControl({ audioRef }) {
   );
 }
 
-/* ========= CAPA DE CELEBRACIÓN (45s) ========= */
+/* CAPA CELEBRATION 45s (tulipanes/corazones flotando) */
 function CelebrationLayer({ show }) {
-  // generamos tulipanes flotando y corazoncitos
   const petals = Array.from({ length: 16 }).map(() => ({
     id: crypto.randomUUID(),
-    left: rand(0, 100), // vw %
-    size: rand(24, 40), // px
-    delay: rand(0, 2), // s
-    dur: rand(6, 9), // s
+    left: rand(0, 100),
+    size: rand(24, 40),
+    delay: rand(0, 2),
+    dur: rand(6, 9),
     rotateStart: rand(-20, 20),
     rotateEnd: rand(-60, 60),
     kind: Math.random() < 0.5 ? "tulip" : "heart",
@@ -257,11 +361,12 @@ function CelebrationLayer({ show }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          {/* lluvia romántica */}
           {petals.map((p) => (
             <motion.div
               key={p.id}
-              className={`float-thing ${p.kind === "tulip" ? "tulip-shape" : "heart-shape"}`}
+              className={`float-thing ${
+                p.kind === "tulip" ? "tulip-shape" : "heart-shape"
+              }`}
               style={{
                 left: `${p.left}vw`,
                 width: p.size,
@@ -286,7 +391,6 @@ function CelebrationLayer({ show }) {
             />
           ))}
 
-          {/* glow suave arriba de todo */}
           <div className="celebration-glow" />
         </motion.div>
       )}
@@ -294,15 +398,13 @@ function CelebrationLayer({ show }) {
   );
 }
 
-/* ========== Carta dentro de un sobre con slides ========== */
+/* Carta / sobre */
 function EnvelopeLetter({ onAcceptedYes }) {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
 
-  // botón "no" que huye
   const [noPos, setNoPos] = useState({ left: "60%", top: "40%" });
 
-  // overlay romántico "ahora eres toda miaa 💜"
   const [acceptedPopup, setAcceptedPopup] = useState(false);
 
   const current = LETTER_PAGES[page];
@@ -314,13 +416,10 @@ function EnvelopeLetter({ onAcceptedYes }) {
   };
 
   const sayYes = () => {
-    // mostramos overlay interno
     setAcceptedPopup(true);
-    // avisamos al App que active el modo celebración de 45s
     onAcceptedYes?.();
   };
 
-  // corazones flotando para el overlay "sí"
   const floatingHearts = Array.from({ length: 20 }).map(() => ({
     id: crypto.randomUUID(),
     left: rand(5, 95),
@@ -329,7 +428,6 @@ function EnvelopeLetter({ onAcceptedYes }) {
     size: rand(16, 26),
   }));
 
-  // bloque del título (normal / especial glowing para la propuesta)
   const TitleBlock = () => {
     if (!current.title && !current.isProposalTitle) return null;
 
@@ -410,14 +508,16 @@ function EnvelopeLetter({ onAcceptedYes }) {
             animate={{ rotateX: open ? 180 : 0 }}
             transition={{ duration: 0.7, ease: "easeInOut" }}
           />
-          {/* sombra papel */}
+
+          {/* glow / sombra interior */}
           <div className="paper-shadow" />
 
+          {/* carta adentro */}
           <AnimatePresence>
             {open && (
               <motion.div
                 key={page}
-                className="letter glass"
+                className="letter"
                 initial={{ opacity: 0, y: 24, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -24, scale: 0.98 }}
@@ -447,7 +547,7 @@ function EnvelopeLetter({ onAcceptedYes }) {
 
                     <p className="letter-text">{current.text}</p>
 
-                    {/* PREGUNTA: ¿QUIERES SER MI NOVIA? */}
+                    {/* PREGUNTA */}
                     {current.isProposal && (
                       <div className="proposal-area">
                         <div className="proposal-question">
@@ -493,9 +593,7 @@ function EnvelopeLetter({ onAcceptedYes }) {
                           <span className="heart" aria-hidden>
                             ❤
                           </span>
-                          <span className="msg">
-                            Haz click cuando termines
-                          </span>
+                          <span className="msg">Haz click cuando termines</span>
                           <span className="mini-hearts" aria-hidden>
                             ❤ ❤ ❤
                           </span>
@@ -628,9 +726,10 @@ function EnvelopeLetter({ onAcceptedYes }) {
   );
 }
 
-/* Confetti */
+/* confetti helper */
 function useConfetti() {
   const layerRef = useRef(null);
+
   useEffect(() => {
     const el = document.createElement("div");
     el.className = "confettiLayer";
@@ -638,6 +737,7 @@ function useConfetti() {
     layerRef.current = el;
     return () => el.remove();
   }, []);
+
   const burst = (x, y, count = 32) => {
     const colors = ["#fde68a", "#f0abfc", "#c4b5fd", "#a78bfa", "#e879f9"];
     for (let i = 0; i < count; i++) {
@@ -666,12 +766,13 @@ function useConfetti() {
   return burst;
 }
 
-/* Corazones del mouse */
+/* corazones que siguen el mouse */
 function useMouseHearts() {
   useEffect(() => {
     const layer = document.createElement("div");
     layer.className = "heartsLayer";
     document.body.appendChild(layer);
+
     let count = 0;
     const onMove = (e) => {
       if (++count % 2) return;
@@ -685,6 +786,7 @@ function useMouseHearts() {
       layer.appendChild(h);
       setTimeout(() => h.remove(), 900);
     };
+
     window.addEventListener("mousemove", onMove);
     return () => {
       window.removeEventListener("mousemove", onMove);
@@ -693,7 +795,7 @@ function useMouseHearts() {
   }, []);
 }
 
-/* -------- Portal estrellado (regalo inicial) -------- */
+/* Portal inicial (tapando todo hasta que lo abra) */
 function StarlitPortalOverlay({ audioRef, onClose }) {
   const [opening, setOpening] = useState(false);
   const burst = useConfetti();
@@ -722,15 +824,18 @@ function StarlitPortalOverlay({ audioRef, onClose }) {
   const open = () => {
     if (opening) return;
     setOpening(true);
+
     const cx = innerWidth / 2;
     const cy = innerHeight / 2;
     burst(cx, cy, 42);
     for (let i = 0; i < 18; i++) {
       burst(cx + rand(-12, 12), cy + rand(-12, 12), 1);
     }
+
     try {
       if (audioRef.current?.src) audioRef.current.play().catch(() => {});
     } catch {}
+
     setTimeout(() => onClose?.(), 900);
   };
 
@@ -788,7 +893,6 @@ function StarlitPortalOverlay({ audioRef, onClose }) {
         transition={{ duration: 0.9, ease: "easeOut" }}
       />
 
-      {/* Botón circular para abrir el regalo */}
       <button
         type="button"
         aria-label="abrir"
@@ -830,22 +934,20 @@ function StarlitPortalOverlay({ audioRef, onClose }) {
   );
 }
 
-/* App */
+/* ================= */
+/*      APP         */
+/* ================= */
+
 export default function App() {
   useMouseHearts();
 
   const audioRef = useRef(null);
 
-  // estado playlist
   const [trackIndex, setTrackIndex] = useState(0);
-
-  // regalo inicial tapado
   const [showGift, setShowGift] = useState(true);
-
-  // CELEBRACIÓN de "sí" (45s)
   const [showCelebration, setShowCelebration] = useState(false);
 
-  // cada vez que cambie trackIndex -> actualizar src y reproducir
+  // set initial song + autoplay
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
@@ -853,7 +955,7 @@ export default function App() {
     a.play().catch(() => {});
   }, [trackIndex]);
 
-  // cuando una canción termina -> ir a la siguiente / loop
+  // cuando termina -> pasa a la próxima
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
@@ -871,33 +973,38 @@ export default function App() {
     };
   }, []);
 
-  // función que el sobre llama cuando ella dice "Sí 💜"
+  // cuando diga que sí -> celebración 45s
   const triggerCelebration = () => {
     setShowCelebration(true);
-
-    // apagamos celebración después de 45 segundos
     setTimeout(() => {
       setShowCelebration(false);
-    }, 45000); // 45,000 ms = 45s
+    }, 45000);
   };
 
   return (
     <>
-      {/* Fondo base */}
-      <div className="bg">
-        <div className="gradient"></div>
-      </div>
-      <div className="dots"></div>
+      {/* FONDO morado base */}
+      <div className="bg-base" />
 
-      {/* stage: se pone en modo celebration cuando showCelebration=true */}
+      {/* estrellitas permanentes */}
+      <StarField />
+
+      {/* stage principal */}
       <div
         className={`stage ${showGift ? "conceal" : ""} ${
           showCelebration ? "celebration" : ""
         }`}
       >
+        {/* stickers flotando atrás */}
+        <StickerLayer />
+
+        {/* collage encima */}
         <Collage />
+
+        {/* control música flotante */}
         <MusicControl audioRef={audioRef} />
 
+        {/* contenido central */}
         <main className="container">
           <div className="row" style={{ marginBottom: 16 }}>
             <div className="badge">♡ Gracias por existir</div>
@@ -921,10 +1028,10 @@ export default function App() {
           >
             Para mi niña hermosa
           </motion.h1>
+
           <p className="lead">Una pequeña muestra del amor que te tengo</p>
 
           <div style={{ marginTop: 24 }}>
-            {/* le pasamos el callback del SÍ */}
             <EnvelopeLetter onAcceptedYes={triggerCelebration} />
           </div>
 
@@ -936,10 +1043,10 @@ export default function App() {
         </main>
       </div>
 
-      {/* capa visual extra de celebración (tulipanes, brillos) */}
+      {/* lluvia de flores/corazones cuando dice que sí */}
       <CelebrationLayer show={showCelebration} />
 
-      {/* Portal sorpresa encima (bloquea hasta que lo abra) */}
+      {/* Portal sorpresa inicial */}
       <AnimatePresence>
         {showGift && (
           <StarlitPortalOverlay
@@ -949,7 +1056,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Audio player (sin loop directo porque hacemos playlist manual) */}
+      {/* audio escondido */}
       <audio ref={audioRef} preload="auto" />
     </>
   );
