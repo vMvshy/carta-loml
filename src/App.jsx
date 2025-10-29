@@ -57,7 +57,7 @@ A veces me pongo a pensar en como empezo todo... y me doy cuenta de que lo nuest
   },
   {
     title: "AMO TODO DE TI",
-    text: `Quiero que sepas que realmente te amo... Pero como no amarte cuando amo la paz que me das cuando hablo contigo, como si todo el ruido o caos en mi cabeza se apagara y solo estuvieras tu... Amo como haces que lo mas simple se sienta especial, amo lo transparente que eres conmigo, amo tu risa, literal, podria escucharla todo el dia y nunca me cansaria...
+    text: `Quiero que sepas que realmente te amo... Pero como no amarte cuando amo la paz que siento cuando hablo contigo, como si todo el ruido o caos en mi cabeza se apagara y solo estuvieras tu... Como haces que lo mas simple se sienta especial, y lo transparente que eres conmigo. Amo tu risa, literal, podria escucharla todo el dia y nunca me cansaria...
 
 Amo cuando me dices "tonto" con esa voz tuya, porque se que lo haces con cariño, amo cuando me dices que me extrañas, amo lo facil que se me hace confiar en ti, amo tu forma de pensar, lo madura y fuerte que eres.
 
