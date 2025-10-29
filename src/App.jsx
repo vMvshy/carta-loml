@@ -57,11 +57,16 @@ A veces me pongo a pensar en como empezo todo... y me doy cuenta de que lo nuest
   },
   {
     title: "AMO TODO DE TI",
-    text: `Quiero que sepas que realmente te amo... Amo la paz que me das cuando hablo contigo, como si todo el ruido o caos en mi cabeza se apagara y solo estuvieras tu... Amo como haces que lo mas simple se sienta especial, amo lo transparente que eres conmigo, amo tu risa, literal, podria escucharla todo el dia y nunca me cansaria.
+    text: `Quiero que sepas que realmente te amo... Pero como no amarte cuando amo la paz que me das cuando hablo contigo, como si todo el ruido o caos en mi cabeza se apagara y solo estuvieras tu... Amo como haces que lo mas simple se sienta especial, amo lo transparente que eres conmigo, amo tu risa, literal, podria escucharla todo el dia y nunca me cansaria...
+
 Amo cuando me dices "tonto" con esa voz tuya, porque se que lo haces con cariño, amo cuando me dices que me extrañas, amo lo facil que se me hace confiar en ti, amo tu forma de pensar, lo madura y fuerte que eres.
-Amo que, aun con tus miedos, sigas siendo tu misma, amo tu forma de querer, tan unica y sincera. Amo como tu presencia cambia mi humor sin esfuerzo, amo cuando te haces la seria aveces cuando te estoy molestando.
+
+Amo que, aun con tus miedos, sigas siendo tu misma, amo tu forma de querer, tan unica y sincera, como tu presencia cambia mi humor sin esfuerzo, y como te haces la seria aveces cuando te estoy molestando.
+
 AMO TODO DE TI, incluso las cosas pequeñas que quiza tu no notas, y sobre todo lo hermosa que se ve tu alma cuando te expresas conmigo...
-Keren, realmente estoy enamorado de ti, y te lo estoy dejando saber atravez de esta pequeñita carta para ti amor, porque te mereces mucho mas... queria tomarme mas tiempo preparando todo y hacerte algo incluso mejor... pero esperar tanto tiempo guardandome todo esto que siento, y mas sabiendo que queria darte un detallito asi como lo has hecho tu, solo me mataba por dentro jsjsjsj
+
+Keren, estoy enamorado de ti, y te lo estoy dejando saber atravez de esta pequeñita carta para ti amor, porque te mereces mucho mas... queria tomarme mas tiempo preparando todo y hacerte algo incluso mejor... pero esperar tanto tiempo guardandome todo esto que siento, y mas sabiendo que queria darte un detallito asi como lo has hecho tu, solo me mataba por dentro jsjsjsj
+
 Sinceramente pensaba tener esto listo para el 23 pero se me paso el tiempo jeje, asi que perdoname amor, queria hacerte algo especial para ese dia, pero al final no hice nada... aunque me la pase contigo, y eso fue lo mas importante, mi parte favorita del dia, asi que... aqui voy jejje`,
     leftImages: ["/imagenes/ABISHYMC.png"],
     rightImages: ["/imagenes/bibi.png"],
@@ -69,9 +74,11 @@ Sinceramente pensaba tener esto listo para el 23 pero se me paso el tiempo jeje,
   {
     title: "KEREN ABIGAIL CARDONA VIDEA💜",
     text: `Despues de todo esto que te dije creo que ya no hace falta adivinarlo jajaja, pero igual te lo digo claro…
-Keren, quiero que seas mi novia, ya creo que es hora de que lo nuestro se vuelva oficial.
+Keren, quiero que seas mi compañera, mi mejor amiga, mi todo... 
+Que sigas siendo esa persona especial en mi vida que me hace querer ser mejor cada dia, y que me inspira a seguir adelante, incluso en los dias mas dificiles...
 Quiero seguir haciendote reir, apoyarte, y con Diosito, vivir todo eso que siempre hablamos, pero de verdad, juntos.
-Seguir creciendo contigo, y seguir creando momentos que solo tengan sentido contigo, porque no me imagino todo esto con nadie mas...`,
+Seguir creciendo contigo, y seguir creando momentos que solo tengan sentido contigo, porque no me imagino todo esto con nadie mas...
+No se en que momento llegaste a importarme tanto, pero aqui estoy, completamente seguro de lo que quiero contigo... y es por eso que hoy te pregunto...`,
     isProposal: true,
     isProposalTitle: true,
     leftImages: ["/imagenes/AxJ-DuoSupra.png"],
@@ -748,9 +755,9 @@ function EnvelopeLetter({ onAcceptedYes }) {
             </div>
 
             <div className="yes-card">
-              <div className="yes-title">Ahora eres toda miaa 💜</div>
+              <div className="yes-title">Jeje sabia que dirias que si... (No tenias opcion)💜</div>
               <p className="yes-desc">
-                Jeje sabia que dirias que si... TE AMOOOOOOOOO
+                AHORA ERES TODAAA MIAAAAA MUAJAJAJAJAJJA TE AMOOOOOOOOO 
                 <br />
                 Prometo cuidarte, hacerte reír y darte todo el amor que te
                 mereces 💜💜💜
