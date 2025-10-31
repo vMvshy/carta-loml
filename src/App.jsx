@@ -1,25 +1,22 @@
 // @ts-nocheck
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* Utils */
+/* ========= utils ========= */
 const rand = (min, max) => Math.random() * (max - min) + min;
 
-/* ====== CONFIG EDITABLE ====== */
+/* ========= CONFIG EDITABLE ========= */
 const CANVAS_LINK =
-  "https://open.spotify.com/playlist/7uyh0SmhIhVU5413Pd7hG1?si=c51513c6d1584cf6&pt=d3035a772b0d0f9020b66edf8f535af0";
+  "https://open.spotify.com/playlist/7uyh0SmhIhVU5413Pd7hG1?si=e99208a142654935&pt=f66f539485c2a7270bfd4910ccd77f96";
 
-/* 🎵 PLAYLIST */
-const PLAYLIST = ["/music/llegaste-tu.mp3", "/music/solamente-tu.mp3"];
+const PLAYLIST = ["/music/llegaste-tu.mp3", "/music/solamente-tu.mp3", "/music/solo-para-ti.mp3"];
 
-/* STICKERS QUE VAN FLOTANDO */
 const STICKER_SRCS = [
   "/stickers/kuromi-heart.png",
   "/stickers/kuromi-cute.png",
   "/stickers/harry-fly.png",
 ];
 
-/* FOTOS DEL COLLAGE DE FONDO */
 const BASE = [
   { url: "/imagenes/AxJ-Bar.png", rotate: -8, x: "6%", y: "8%", z: 1 },
   { url: "/imagenes/AxJ-City.png", rotate: 7, x: "70%", y: "12%", z: 2 },
@@ -27,7 +24,7 @@ const BASE = [
   { url: "/imagenes/duocar.png", rotate: -5, x: "72%", y: "62%", z: 1 },
 ];
 
-/* PÁGINAS DE LA CARTA */
+/* ========= PÁGINAS DE LA CARTA ========= */
 const LETTER_PAGES = [
   {
     title: "Lo que siento por ti",
@@ -85,15 +82,18 @@ No se en que momento llegaste a importarme tanto, pero aqui estoy, completamente
     rightImages: ["/imagenes/LOML2.png"],
   },
   {
-    title: "Para ti, solo para ti",
-    text: "Cuando termines, toca el corazoncito 💜",
+    title: "Un pequeño detalle 💜",
+    text: "Busca una pequeña sopresa por la pantalla.",
     isFinal: true,
     leftImages: [],
     rightImages: [],
   },
 ];
 
-/* Tulip */
+/* ========================= */
+/*   COMPONENTES VISUALES   */
+/* ========================= */
+
 const Tulip = ({ size = 40 }) => (
   <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden>
     <defs>
@@ -132,7 +132,7 @@ const Tulip = ({ size = 40 }) => (
   </svg>
 );
 
-/* ⭐ estrellitas de fondo PERMANENTES (detrás de todo) */
+/* ⭐ fondo estrellas fijas */
 function StarField() {
   const stars = Array.from({ length: 120 }).map(() => ({
     id: crypto.randomUUID(),
@@ -149,11 +149,7 @@ function StarField() {
         <motion.span
           key={st.id}
           className="bgStarDot"
-          style={{
-            left: `${st.x}vw`,
-            top: `${st.y}vh`,
-            scale: st.s,
-          }}
+          style={{ left: `${st.x}vw`, top: `${st.y}vh`, scale: st.s }}
           animate={{ opacity: [0.2, 1, 0.2] }}
           transition={{
             duration: st.d,
@@ -167,14 +163,12 @@ function StarField() {
   );
 }
 
-/* 🎀 STICKERS flotando suave en su sitio (fondo, más pequeños) */
+/* stickers flotando */
 function StickerLayer() {
-  // guardamos las posiciones para que no cambien en cada render
   const stickersRef = useRef(
     Array.from({ length: 8 }).map(() => {
       const src =
         STICKER_SRCS[Math.floor(Math.random() * STICKER_SRCS.length)];
-
       return {
         id: crypto.randomUUID(),
         xStart: rand(0, 100),
@@ -183,7 +177,7 @@ function StickerLayer() {
         driftY: rand(-15, 15),
         rot0: rand(-8, 8),
         rot1: rand(-14, 14),
-        size: rand(40, 70), // ya chiquitos
+        size: rand(40, 70),
         dur: rand(8, 12),
         delay: rand(0, 4),
         src,
@@ -204,12 +198,7 @@ function StickerLayer() {
             width: st.size + "px",
             height: "auto",
           }}
-          initial={{
-            x: 0,
-            y: 0,
-            rotate: st.rot0,
-            opacity: 0.3,
-          }}
+          initial={{ x: 0, y: 0, rotate: st.rot0, opacity: 0.3 }}
           animate={{
             x: [0, st.driftX, 0],
             y: [0, st.driftY, 0],
@@ -229,7 +218,7 @@ function StickerLayer() {
   );
 }
 
-/* Collage flotante en el fondo (encima de los stickers) */
+/* collage flotante */
 function Collage() {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
@@ -249,7 +238,12 @@ function Collage() {
         <motion.div
           key={i}
           className="frame"
-          style={{ left: p.x, top: p.y, zIndex: p.z, rotate: p.rotate }}
+          style={{
+            left: p.x,
+            top: p.y,
+            zIndex: p.z,
+            rotate: p.rotate,
+          }}
           animate={{
             y: [0, -6, 0],
             rotate: [p.rotate, p.rotate + 1.2, p.rotate],
@@ -307,12 +301,7 @@ function MusicControl({ audioRef, onPrevTrack, onNextTrack }) {
 
   return (
     <div className="controls">
-      <button
-        className="btn"
-        onClick={() => {
-          setOpen((o) => !o);
-        }}
-      >
+      <button className="btn" onClick={() => setOpen((o) => !o)}>
         🎵
       </button>
 
@@ -325,7 +314,6 @@ function MusicControl({ audioRef, onPrevTrack, onNextTrack }) {
             exit={{ opacity: 0, x: 12 }}
             transition={{ type: "spring", stiffness: 220, damping: 20 }}
           >
-            {/* volumen */}
             🔊{" "}
             <input
               type="range"
@@ -336,8 +324,6 @@ function MusicControl({ audioRef, onPrevTrack, onNextTrack }) {
               onChange={(e) => setVol(parseFloat(e.target.value))}
               style={{ width: "110px" }}
             />
-
-            {/* controles de track */}
             <div
               style={{
                 display: "flex",
@@ -347,7 +333,6 @@ function MusicControl({ audioRef, onPrevTrack, onNextTrack }) {
                 justifyContent: "center",
               }}
             >
-              {/* anterior */}
               <button
                 className="btn"
                 style={{ padding: "6px 10px" }}
@@ -356,7 +341,6 @@ function MusicControl({ audioRef, onPrevTrack, onNextTrack }) {
                 {"<"}
               </button>
 
-              {/* play / pausa */}
               <button
                 className="btn"
                 style={{ padding: "6px 10px" }}
@@ -365,7 +349,6 @@ function MusicControl({ audioRef, onPrevTrack, onNextTrack }) {
                 {playing ? "||" : "▶"}
               </button>
 
-              {/* siguiente */}
               <button
                 className="btn"
                 style={{ padding: "6px 10px" }}
@@ -381,7 +364,7 @@ function MusicControl({ audioRef, onPrevTrack, onNextTrack }) {
   );
 }
 
-/* CAPA CELEBRATION 45s (tulipanes/corazones flotando) */
+/* CAPA CELEBRATION 45s */
 function CelebrationLayer({ show }) {
   const petals = Array.from({ length: 16 }).map(() => ({
     id: crypto.randomUUID(),
@@ -415,11 +398,7 @@ function CelebrationLayer({ show }) {
                 width: p.size,
                 height: p.size,
               }}
-              initial={{
-                y: "-10vh",
-                rotate: p.rotateStart,
-                opacity: 0,
-              }}
+              initial={{ y: "-10vh", rotate: p.rotateStart, opacity: 0 }}
               animate={{
                 y: "110vh",
                 rotate: p.rotateEnd,
@@ -441,13 +420,643 @@ function CelebrationLayer({ show }) {
   );
 }
 
-/* Carta / sobre */
+/* ====================== */
+/*  GAME 1: drag hearts   */
+/* ====================== */
+
+function GameHearts({ onDone }) {
+  const [placed, setPlaced] = useState([]);
+  const hearts = [
+    { id: "h1", color: "#e879f9" },
+    { id: "h2", color: "#a78bfa" },
+    { id: "h3", color: "#c084fc" },
+  ];
+
+  function handleDragStart(e, id) {
+    e.dataTransfer.setData("heart-id", id);
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    const id = e.dataTransfer.getData("heart-id");
+    if (!id) return;
+    if (!placed.includes(id)) {
+      const newPlaced = [...placed, id];
+      setPlaced(newPlaced);
+      if (newPlaced.length === hearts.length) {
+        setTimeout(() => {
+          onDone?.();
+        }, 800);
+      }
+    }
+  }
+
+  function allowDrop(e) {
+    e.preventDefault();
+  }
+
+  return (
+    <div className="game-card drag-wrapper">
+      <div className="game-title">1 / 3 — Corazones al sobre 💌</div>
+      <div className="game-desc">
+        Arrastra los 3 corazoncitos dentro del sobre. Cuando entren todos,
+        pasas al siguiente...
+      </div>
+
+      <div className="drag-zone">
+        <div className="drag-hearts">
+          {hearts.map((h) => (
+            <motion.div
+              key={h.id}
+              className={`drag-heart piece ${
+                placed.includes(h.id) ? "drag-heart-done" : ""
+              }`}
+              draggable={!placed.includes(h.id)}
+              onDragStart={(e) => handleDragStart(e, h.id)}
+              style={{
+                color: h.color,
+                opacity: placed.includes(h.id) ? 0.3 : 1,
+              }}
+              animate={{
+                y: [0, -6, 0],
+                rotate: [-4, 4, -4],
+              }}
+              transition={{
+                duration: 2 + Math.random(),
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
+
+        <div
+          className="drop-target"
+          onDragOver={allowDrop}
+          onDrop={handleDrop}
+        >
+          <div className="drop-envelope-top" />
+          <div className="drop-body">
+            <div className="drop-msg">
+              <div className="drop-text">Ponlos aquí 💜</div>
+              <div className="drop-count">
+                {placed.length} / {hearts.length}
+              </div>
+            </div>
+          </div>
+          <div className="drop-glow" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ====================== */
+/*  GAME 2: adivinanza    */
+/* ====================== */
+
+function GameRiddle({ onCorrect }) {
+  const [answered, setAnswered] = useState(false);
+  const [wrong, setWrong] = useState(false);
+
+  const options = [
+    "Tu carita hermosa",
+    "Tu voz",
+    "Tus ojitos",
+    "Todo", // correcta
+  ];
+
+  function pick(opt) {
+    if (opt === "Todo") {
+      setAnswered(true);
+      setWrong(false);
+      setTimeout(() => {
+        onCorrect?.();
+      }, 900);
+    } else {
+      setWrong(true);
+      setTimeout(() => setWrong(false), 1200);
+    }
+  }
+
+  return (
+    <div className="game-card riddle-wrapper">
+      <div className="game-title">2 / 3 — Adivina ✨</div>
+
+      <div className="game-question">¿Qué es lo que más amo de ti?</div>
+
+      <div className="riddle-options">
+        {options.map((o) => (
+          <button
+            key={o}
+            className={`riddle-btn ${answered ? "riddle-disabled" : ""}`}
+            onClick={() => !answered && pick(o)}
+          >
+            {o}
+          </button>
+        ))}
+      </div>
+
+      <div
+        className={`riddle-feedback ${
+          answered ? "riddle-correct" : wrong ? "riddle-wrong" : ""
+        }`}
+      >
+        {answered
+          ? "Obvioooooooo💜"
+          : wrong
+          ? "Nop, intenta otra vez preciosa 😌"
+          : "Elige una opción"}
+      </div>
+    </div>
+  );
+}
+
+/* ====================== */
+/*  GAME 3: AHORCADO LOVE */
+/* ====================== */
+
+function GameHangman({ onFinishAll }) {
+  
+  const rounds = [
+    {
+      word: "IMÁN",
+      displayWord: "IMÁN",
+      hint: "Lo que me llevó hacia ti.",
+    },
+    {
+      word: "UNIVERSO",
+      displayWord: "UNIVERSO",
+      hint: "Donde caben nuestros planes.",
+    },
+    {
+      word: "SOLAMENTE TÚ",
+      displayWord: "SOLAMENTE TÚ",
+      hint: "Mi centro.",
+    },
+  ];
+
+  const normalize = (s) =>
+    s
+      .toUpperCase()
+      .replace(/Á/g, "A")
+      .replace(/É/g, "E")
+      .replace(/Í/g, "I")
+      .replace(/Ó/g, "O")
+      .replace(/Ú/g, "U")
+      .replace(/Ü/g, "U")
+      .replace(/Ñ/g, "Ñ");
+
+  const [roundIndex, setRoundIndex] = useState(0);
+  const [guessedLetters, setGuessedLetters] = useState([]);
+  const [fails, setFails] = useState(0);
+  const [streakFails, setStreakFails] = useState(0);
+  const [finishedAll, setFinishedAll] = useState(false);
+
+  const current = rounds[roundIndex];
+  const targetNorm = normalize(current.word);
+  const alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
+
+  const revealed = current.displayWord
+    .split("")
+    .map((ch) => {
+      if (ch === " ") return " ";
+      const norm = normalize(ch);
+      return guessedLetters.includes(norm) ? ch : "_";
+    })
+    .join("");
+
+  const isComplete = !revealed.includes("_");
+
+  useEffect(() => {
+    if (isComplete && !finishedAll) {
+      if (roundIndex < rounds.length - 1) {
+        const t = setTimeout(() => {
+          setRoundIndex((i) => i + 1);
+          setGuessedLetters([]);
+          setFails(0);
+          setStreakFails(0);
+        }, 1200);
+        return () => clearTimeout(t);
+      } else {
+        // terminó TODO
+        const t = setTimeout(() => {
+          setFinishedAll(true);
+          onFinishAll?.(); // dispara overlay final
+        }, 1200);
+        return () => clearTimeout(t);
+      }
+    }
+  }, [
+    isComplete,
+    roundIndex,
+    rounds.length,
+    finishedAll,
+    onFinishAll,
+    setRoundIndex,
+    setGuessedLetters,
+    setFails,
+    setStreakFails,
+  ]);
+
+  function revealRandomLetter() {
+    const chars = current.displayWord.split("");
+    const hiddenCandidates = [];
+    chars.forEach((ch) => {
+      if (ch === " ") return;
+      const norm = normalize(ch);
+      if (!guessedLetters.includes(norm)) {
+        hiddenCandidates.push(norm);
+      }
+    });
+    if (hiddenCandidates.length === 0) return;
+    const pick =
+      hiddenCandidates[Math.floor(Math.random() * hiddenCandidates.length)];
+    setGuessedLetters((prev) => [...prev, pick]);
+  }
+
+  function guess(letter) {
+    if (finishedAll) return;
+    if (guessedLetters.includes(letter)) return;
+
+    if (targetNorm.includes(letter)) {
+      setGuessedLetters((prev) => [...prev, letter]);
+      setStreakFails(0);
+    } else {
+      const newFails = fails + 1;
+      const newStreak = streakFails + 1;
+      setFails(newFails);
+      setStreakFails(newStreak);
+
+      if (newStreak >= 3) {
+        setTimeout(() => {
+          revealRandomLetter();
+          setStreakFails(0);
+        }, 400);
+      }
+    }
+  }
+
+  return (
+  <div className="games-wrapper">
+    {/* Cuadro con los juegos */}
+    <div className={`game-card hang-wrapper ${finishedAll ? 'hidden' : ''}`}>
+      {!finishedAll ? (
+        <>
+          <div className="game-title">
+            3 / 3 — Palabra {roundIndex + 1} de {rounds.length}
+          </div>
+
+          <div className="hang-hint-row">
+            <div className="hang-hint-label">Pista:</div>
+            <div className="hang-hint-text">{current.hint}</div>
+          </div>
+
+          <div className="hang-word">
+            {revealed.split("").map((ch, i) => (
+              <span
+                key={i}
+                className={`hang-char ${ch === " " ? "hang-space" : ""}`}
+              >
+                {ch}
+              </span>
+            ))}
+          </div>
+
+          <div className="hang-tries">Fallos: {fails}</div>
+
+          <div className="hang-letters">
+            {alphabet.map((ltr) => (
+              <button
+                key={ltr}
+                className={`hang-letter-btn ${
+                  guessedLetters.includes(ltr) ? "hang-used" : ""
+                }`}
+                onClick={() => guess(ltr)}
+                disabled={guessedLetters.includes(ltr)}
+              >
+                {ltr}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="hang-final">
+          {/* Ya no mostramos nada de los juegos aquí */}
+        </div>
+      )}
+    </div>
+
+  </div>
+);
+
+
+}
+
+/* ========================= */
+/* FINAL CONSTELLATION OVERLAY */
+/* =========================
+   cambios:
+   - NO se cierra con click en toda la pantalla
+   - quitamos la polyline (línea blanca)
+   - las estrellas del corazón parpadean y parecen parte del mismo cielo
+   - texto principal más grande/golpe visual
+   - bloque extra abajo para explicar el significado
+*/
+
+function FinalConstellationOverlay({ visible }) {
+  // puntos del corazón (formato % en un box virtual 100x70)
+  const HEART_POINTS = [
+    { x: 46, y: 38 },
+    { x: 44.5, y: 35.5 },
+    { x: 43, y: 33 },
+    { x: 41.5, y: 31.5 },
+    { x: 40, y: 30.5 },
+    { x: 38.5, y: 30 },
+    { x: 37, y: 30 },
+    { x: 35.5, y: 30.5 },
+    { x: 34, y: 31.5 },
+    { x: 32.8, y: 33 },
+    { x: 31.8, y: 35 },
+    { x: 31.3, y: 37.5 },
+    { x: 31.5, y: 40 },
+    { x: 32.2, y: 42.5 },
+    { x: 33.5, y: 45 },
+    { x: 35.2, y: 47.5 },
+    { x: 37.2, y: 50 },
+    { x: 39.4, y: 52.5 },
+    { x: 41.8, y: 55 },
+    { x: 44.2, y: 57.5 },
+    { x: 46.6, y: 60 },
+    { x: 49, y: 62.5 },
+    { x: 50, y: 63.5 }, // punta
+    { x: 51, y: 62.5 },
+    { x: 53.4, y: 60 },
+    { x: 55.8, y: 57.5 },
+    { x: 58.2, y: 55 },
+    { x: 60.6, y: 52.5 },
+    { x: 62.8, y: 50 },
+    { x: 64.8, y: 47.5 },
+    { x: 66.5, y: 45 },
+    { x: 67.8, y: 42.5 },
+    { x: 68.5, y: 40 },
+    { x: 68.7, y: 37.5 },
+    { x: 68.2, y: 35 },
+    { x: 67.2, y: 33 },
+    { x: 66, y: 31.5 },
+    { x: 64.5, y: 30.5 },
+    { x: 63, y: 30 },
+    { x: 61.5, y: 30 },
+    { x: 60, y: 30.5 },
+    { x: 58.5, y: 31.5 },
+    { x: 57, y: 33 },
+    { x: 55.5, y: 35.5 },
+    { x: 54, y: 38 },
+    { x: 50, y: 39.5 },
+    { x: 46, y: 38 },
+  ];
+
+  // estrellas de fondo (galaxia general)
+  const bgStars = useRef(
+    Array.from({ length: 180 }).map(() => ({
+      id: crypto.randomUUID(),
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      s: 0.4 + Math.random() * 1.2,
+      d: 1.2 + Math.random() * 1.8,
+      o: Math.random() * 1.5,
+    }))
+  ).current;
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          className="final-constellation-layer"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 999,
+            background:
+              "radial-gradient(circle at 50% 40%, rgba(20,0,40,.6) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 80%)",
+            pointerEvents: "none",
+            color: "#fff",
+            textAlign: "center",
+            fontFamily: "inherit",
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          {/* todas las estrellitas random del universo */}
+          {bgStars.map((st) => (
+            <motion.span
+              key={st.id}
+              style={{
+                position: "fixed",
+                left: `${st.x}vw`,
+                top: `${st.y}vh`,
+                width: "2px",
+                height: "2px",
+                borderRadius: "50%",
+                backgroundColor: "#fff",
+                boxShadow:
+                  "0 0 6px rgba(255,255,255,.8),0 0 20px rgba(167,139,250,.4)",
+                opacity: 0.9,
+              }}
+              animate={{
+                opacity: [0.2, 1, 0.2],
+                scale: [1, st.s, 1],
+              }}
+              transition={{
+                duration: st.d,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: st.o,
+              }}
+            />
+          ))}
+
+          {/* corazón hecho con estrellas parpadeando */}
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              width: "150vw",  // Aumentamos el tamaño del corazón
+              maxWidth: "2000px",  // Máxima anchura del corazón
+              minWidth: "300px",
+              aspectRatio: "1 / 0.8",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            {HEART_POINTS.map((p, idx) => (
+              <motion.span
+                key={idx}
+                style={{
+                  position: "absolute",
+                  left: `${p.x}%`,
+                  top: `${p.y}%`,
+                  width: "4px",
+                  height: "4px",
+                  borderRadius: "50%",
+                  backgroundColor: "#fff",
+                  boxShadow:
+                    "0 0 8px rgba(255,255,255,.9),0 0 24px rgba(232,121,249,.8),0 0 48px rgba(167,139,250,.6)",
+                  transform: "translate(-50%, -50%)",
+                }}
+                animate={{
+                  opacity: [0.4, 1, 0.4],
+                  scale: [1, 1.4, 1],
+                }}
+                transition={{
+                  duration: 2 + Math.random() * 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: Math.random() * 1.5,
+                }}
+              />
+            ))}
+
+            {/* Botón K + J en el CENTRO del corazón */}
+            <motion.a
+              href={CANVAS_LINK}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                position: "absolute",
+                left: "48%",
+                top: "48%", // Ajustado más abajo de la punta
+                transform: "translate(-50%, -50%)",
+                textDecoration: "none",
+                fontWeight: 800,
+                fontSize: "14px",
+                color: "#fff",
+                background:
+                  "radial-gradient(circle at 50% 40%, rgba(124,58,237,1) 0%, rgba(59,7,100,1) 60%)",
+                border: "1px solid rgba(255,255,255,.4)",
+                boxShadow:
+                  "0 20px 60px rgba(0,0,0,.9), 0 0 20px rgba(255,255,255,.8), 0 0 60px rgba(167,139,250,.8)",
+                padding: "10px 14px",
+                borderRadius: "10px",
+                lineHeight: 1,
+                pointerEvents: "auto",
+              }}
+              animate={{
+                boxShadow: [
+                  "0 0 12px rgba(255,255,255,.9), 0 0 32px rgba(232,121,249,.8), 0 0 80px rgba(124,58,237,.6)",
+                  "0 0 4px rgba(255,255,255,.5), 0 0 16px rgba(232,121,249,.5), 0 0 40px rgba(124,58,237,.4)",
+                  "0 0 12px rgba(255,255,255,.9), 0 0 32px rgba(232,121,249,.8), 0 0 80px rgba(124,58,237,.6)",
+                ],
+                textShadow: [
+                  "0 0 8px rgba(255,255,255,1),0 0 24px rgba(232,121,249,.8)",
+                  "0 0 4px rgba(255,255,255,.6),0 0 12px rgba(232,121,249,.4)",
+                  "0 0 8px rgba(255,255,255,1),0 0 24px rgba(232,121,249,.8)",
+                ],
+                scale: [1, 1.07, 1],
+              }}
+              transition={{
+                duration: 2.2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              K + J
+            </motion.a>
+          </div>
+
+          {/* título/frase arriba - más grande, más glow */}
+          <div
+            style={{
+              position: "absolute",
+              top: "40px",
+              left: 0,
+              right: 0,
+              fontWeight: 700,
+              fontSize: "26px", // Aumentado el tamaño
+              lineHeight: 1.4,
+              textShadow:
+                "0 0 20px rgba(255,255,255,.9),0 0 30px rgba(167,139,250,1),0 0 80px rgba(232,121,249,.8)",
+            }}
+          >
+            <div>Un imán en medio del universo...</div>
+            <div>Solamente tú.</div>
+          </div>
+
+          {/* significado / explicación debajo */}
+          <div
+            className="final-meaning"
+            style={{
+              position: "absolute",
+              left: "50%",
+              bottom: "12vh", // Ajustado un poco más arriba
+              transform: "translateX(-50%)",
+              width: "90vw",
+              maxWidth: "500px",
+              fontSize: "15px", // Aumentada la fuente
+              lineHeight: 1.5,
+              fontWeight: 400,
+              color: "rgba(255,255,255,.9)",
+              textShadow:
+                "0 0 6px rgba(255,255,255,.6),0 0 20px rgba(167,139,250,.7),0 0 40px rgba(232,121,249,.4)",
+              textAlign: "center",
+              pointerEvents: "none",
+            }}
+          >
+            Un imán, porque, sin importar lo que pase, siempre me atraes hacia ti con tu forma de ser. En medio del universo, porque aunque haya tantas cosas a mi alrededor, tú eres mi foco, mi centro, mi todo. Y solamente tú… porque no hay lugar en mi vida para nadie más, solo para ti. ILYSM! 💜
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+
+/* ====================== */
+/* WRAPPER GENERAL JUEGOS */
+/* ====================== */
+
+function GamesHub({ onAllDone }) {
+  const [phase, setPhase] = useState(1); // 1 drag, 2 riddle, 3 hangman
+
+  return (
+    <div className="games-wrapper">
+      {phase === 1 && (
+        <GameHearts
+          onDone={() => {
+            setPhase(2);
+          }}
+        />
+      )}
+
+      {phase === 2 && (
+        <GameRiddle
+          onCorrect={() => {
+            setPhase(3);
+          }}
+        />
+      )}
+
+      {phase === 3 && (
+        <GameHangman
+          onFinishAll={() => {
+            onAllDone?.();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ====================== */
+/*       CARTA / LOVE     */
+/* ====================== */
+
 function EnvelopeLetter({ onAcceptedYes }) {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
-
   const [noPos, setNoPos] = useState({ left: "60%", top: "40%" });
-
   const [acceptedPopup, setAcceptedPopup] = useState(false);
 
   const current = LETTER_PAGES[page];
@@ -552,10 +1161,10 @@ function EnvelopeLetter({ onAcceptedYes }) {
             transition={{ duration: 0.7, ease: "easeInOut" }}
           />
 
-          {/* glow / sombra interior */}
+          {/* glow dentro */}
           <div className="paper-shadow" />
 
-          {/* carta adentro */}
+          {/* carta */}
           <AnimatePresence>
             {open && (
               <motion.div
@@ -628,21 +1237,10 @@ function EnvelopeLetter({ onAcceptedYes }) {
 
                     {/* SLIDE FINAL */}
                     {current.isFinal && (
-                      <div className="final-action">
-                        <a
-                          className="heart-link"
-                          href={CANVAS_LINK}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <span className="heart" aria-hidden>
-                            ❤
-                          </span>
-                          <span className="msg">Haz click cuando termines</span>
-                          <span className="mini-hearts" aria-hidden>
-                            ❤ ❤ ❤
-                          </span>
-                        </a>
+                      <div className="final-action-hint">
+                        <em style={{ opacity: 0.7 }}>
+                          
+                        </em>
                       </div>
                     )}
                   </div>
@@ -710,11 +1308,14 @@ function EnvelopeLetter({ onAcceptedYes }) {
             )}
           </AnimatePresence>
 
-          {/* SELLO (antes de abrir) */}
+          {/* SELLO */}
           {!open && (
             <motion.div
               className="wax-seal"
-              animate={{ scale: [1, 1.06, 1], rotate: [0, 2, 0] }}
+              animate={{
+                scale: [1, 1.06, 1],
+                rotate: [0, 2, 0],
+              }}
               transition={{
                 duration: 2,
                 repeat: Infinity,
@@ -727,7 +1328,7 @@ function EnvelopeLetter({ onAcceptedYes }) {
         </div>
       </div>
 
-      {/* OVERLAY CUANDO DICE SÍ */}
+      {/* OVERLAY "dijo que sí" */}
       <AnimatePresence>
         {acceptedPopup && (
           <motion.div
@@ -755,9 +1356,11 @@ function EnvelopeLetter({ onAcceptedYes }) {
             </div>
 
             <div className="yes-card">
-              <div className="yes-title">Jeje sabia que dirias que si... (No tenias opcion)💜</div>
+              <div className="yes-title">
+                Jeje sabia que dirias que si... (No tenias opcion)💜
+              </div>
               <p className="yes-desc">
-                AHORA ERES TODAAA MIAAAAA MUAJAJAJAJAJJA TE AMOOOOOOOOO 
+                AHORA ERES TODAAA MIAAAAA MUAJAJAJAJAJJA TE AMOOOOOOOOO
                 <br />
                 Prometo cuidarte, hacerte reír y darte todo el amor que te
                 mereces 💜💜💜
@@ -773,7 +1376,10 @@ function EnvelopeLetter({ onAcceptedYes }) {
   );
 }
 
-/* confetti helper */
+/* ====================== */
+/* confetti helper        */
+/* ====================== */
+
 function useConfetti() {
   const layerRef = useRef(null);
 
@@ -842,7 +1448,7 @@ function useMouseHearts() {
   }, []);
 }
 
-/* Portal inicial (tapando todo hasta que lo abra) */
+/* Portal inicial */
 function StarlitPortalOverlay({ audioRef, onClose }) {
   const [opening, setOpening] = useState(false);
   const burst = useConfetti();
@@ -868,7 +1474,7 @@ function StarlitPortalOverlay({ audioRef, onClose }) {
     }))
   ).current;
 
-  const open = () => {
+  const openPortal = () => {
     if (opening) return;
     setOpening(true);
 
@@ -897,11 +1503,7 @@ function StarlitPortalOverlay({ audioRef, onClose }) {
         <motion.span
           key={st.id}
           className="starDot"
-          style={{
-            left: `${st.x}vw`,
-            top: `${st.y}vh`,
-            scale: st.s,
-          }}
+          style={{ left: `${st.x}vw`, top: `${st.y}vh`, scale: st.s }}
           animate={{ opacity: [0.2, 1, 0.2] }}
           transition={{
             duration: st.d,
@@ -921,7 +1523,10 @@ function StarlitPortalOverlay({ audioRef, onClose }) {
             width: p.size,
             height: p.size,
           }}
-          animate={{ y: ["-10vh", "110vh"], rotate: [0, 45, -25, 0] }}
+          animate={{
+            y: ["-10vh", "110vh"],
+            rotate: [0, 45, -25, 0],
+          }}
           transition={{
             duration: p.dur,
             repeat: Infinity,
@@ -944,7 +1549,7 @@ function StarlitPortalOverlay({ audioRef, onClose }) {
         type="button"
         aria-label="abrir"
         className="portalCore no-jump"
-        onClick={open}
+        onClick={openPortal}
       >
         <motion.svg
           viewBox="0 0 64 64"
@@ -989,10 +1594,30 @@ export default function App() {
   useMouseHearts();
 
   const audioRef = useRef(null);
-
   const [trackIndex, setTrackIndex] = useState(0);
+
+  // portal bloqueando
   const [showGift, setShowGift] = useState(true);
+
+  // lluvia 45s cuando dice que sí
   const [showCelebration, setShowCelebration] = useState(false);
+
+  // aparece el ? después que ella dice que sí
+  const [secretQ, setSecretQ] = useState(null); // { x, y, visible }
+
+  // pantalla de juegos
+  const [showGames, setShowGames] = useState(false);
+  const [finishedAll, setFinishedAll] = useState(false);
+
+  // overlay final corazón gigante
+  const [showFinalOverlay, setShowFinalOverlay] = useState(false);
+
+  // soltar el “?” en posición aleatoria
+  const dropSecretQuestion = () => {
+    const x = rand(8, 88); // vw
+    const y = rand(12, 80); // vh
+    setSecretQ({ x, y, visible: true });
+  };
 
   // cargar / reproducir canción actual cuando cambie trackIndex
   useEffect(() => {
@@ -1002,7 +1627,7 @@ export default function App() {
     a.play().catch(() => {});
   }, [trackIndex]);
 
-  // cuando termina -> pasa a la próxima
+  // cuando termina la canción -> próxima
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
@@ -1020,22 +1645,23 @@ export default function App() {
     };
   }, []);
 
-  // celebración 45s cuando ella dice que sí 💜
+  // celebración 45s cuando ella dice que sí 💜 + mostrar "?"
   const triggerCelebration = () => {
     setShowCelebration(true);
+    dropSecretQuestion(); // aparece el "?"
+
     setTimeout(() => {
       setShowCelebration(false);
     }, 45000);
   };
 
-  // *** NUEVO: siguiente / anterior canción ***
+  // siguiente / anterior canción
   const nextTrack = () => {
     setTrackIndex((i) => {
       const n = i + 1;
       return n >= PLAYLIST.length ? 0 : n;
     });
   };
-
   const prevTrack = () => {
     setTrackIndex((i) => {
       const n = i - 1;
@@ -1043,71 +1669,116 @@ export default function App() {
     });
   };
 
+  // click en el "?" misterioso -> mostrar juegos y ocultar carta
+  const onSecretClick = () => {
+    setShowGames(true);
+  };
+
+  // cuando termina TODO el juego del ahorcado -> mostrar overlay final
+  const onGamesAllDone = () => {
+    // marcamos que terminaron TODOS los juegos para ocultar la capa de juegos
+    setFinishedAll(true);
+    setShowFinalOverlay(true);
+  };
+
   return (
     <>
-      {/* FONDO morado base */}
+      {/* fondo morado base */}
       <div className="bg-base" />
 
-      {/* estrellitas permanentes */}
+      {/* estrellas permanentes */}
       <StarField />
 
-      {/* stage principal */}
-      <div
-        className={`stage ${showGift ? "conceal" : ""} ${
-          showCelebration ? "celebration" : ""
-        }`}
-      >
-        {/* stickers flotando atrás */}
-        <StickerLayer />
+      {/* STAGE principal (carta y todo) - se oculta si showGames === true */}
+      {!showGames && (
+        <div
+          className={`stage ${showGift ? "conceal" : ""} ${
+            showCelebration ? "celebration" : ""
+          }`}
+        >
+          {/* stickers flotando atrás */}
+          <StickerLayer />
 
-        {/* collage encima */}
-        <Collage />
+          {/* collage encima */}
+          <Collage />
 
-        {/* control música flotante */}
-        <MusicControl
-          audioRef={audioRef}
-          onPrevTrack={prevTrack}
-          onNextTrack={nextTrack}
-        />
+          {/* control música flotante */}
+          <MusicControl
+            audioRef={audioRef}
+            onPrevTrack={prevTrack}
+            onNextTrack={nextTrack}
+          />
 
-        {/* contenido central */}
-        <main className="container">
-          <div className="row" style={{ marginBottom: 16 }}>
-            <div className="badge">♡ Gracias por existir</div>
-            <motion.div
-              animate={{ y: [0, -6, 0], rotate: [0, 2, -1, 0] }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <Tulip size={44} />
-            </motion.div>
-          </div>
-
-          <motion.h1
-            className="title"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Para mi niña hermosa
-          </motion.h1>
-
-          <p className="lead">Una pequeña muestra del amor que te tengo</p>
-
-          <div style={{ marginTop: 24 }}>
-            <EnvelopeLetter onAcceptedYes={triggerCelebration} />
-          </div>
-
-          <div className="footer">
-            <div className={`love ${showCelebration ? "love-glow" : ""}`}>
-              TE AMO KEREN
+          {/* contenido central */}
+          <main className="container">
+            <div className="row" style={{ marginBottom: 16 }}>
+              <div className="badge">♡ Gracias por existir</div>
+              <motion.div
+                animate={{
+                  y: [0, -6, 0],
+                  rotate: [0, 2, -1, 0],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <Tulip size={44} />
+              </motion.div>
             </div>
-          </div>
-        </main>
-      </div>
+
+            <motion.h1
+              className="title"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              Para mi niña hermosa
+            </motion.h1>
+
+            <p className="lead">Una pequeña muestra del amor que te tengo</p>
+
+            <div style={{ marginTop: 24 }}>
+              <EnvelopeLetter onAcceptedYes={triggerCelebration} />
+            </div>
+
+            <div className="footer">
+              <div className={`love ${showCelebration ? "love-glow" : ""}`}>
+                TE AMO KEREN
+              </div>
+            </div>
+          </main>
+        </div>
+      )}
+
+      {/* ? secreto — aparece después que dice que sí */}
+      {!showGames && secretQ?.visible && (
+        <motion.button
+          type="button"
+          aria-label="Sorpresita secreta"
+          className="hidden-qmark"
+          style={{
+            left: `${secretQ.x}vw`,
+            top: `${secretQ.y}vh`,
+          }}
+          initial={{ opacity: 0.08, scale: 0.95 }}
+          animate={{
+            opacity: [0.1, 0.25, 0.12],
+            y: [0, -3, 0],
+            scale: [0.95, 1.02, 0.95],
+          }}
+          transition={{
+            duration: 3.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          onClick={onSecretClick}
+        >
+          ?
+          <span className="sr-only">Ábreme si me encuentras</span>
+        </motion.button>
+      )}
 
       {/* lluvia de flores/corazones cuando dice que sí */}
       <CelebrationLayer show={showCelebration} />
@@ -1121,6 +1792,18 @@ export default function App() {
           />
         )}
       </AnimatePresence>
+
+      {/* === CAPA JUEGOS === */}
+      {showGames && !finishedAll && (
+  <div className={`games-bg-layer ${finishedAll ? 'hidden' : ''}`}>
+    <StickerLayer />
+    <Collage />
+    <GamesHub onAllDone={onGamesAllDone} />
+  </div>
+)}
+
+      {/* overlay final fullscreen con constelación corazón y "K + J" */}
+      <FinalConstellationOverlay visible={showFinalOverlay} />
 
       {/* audio escondido */}
       <audio ref={audioRef} preload="auto" />
