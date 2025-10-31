@@ -1075,3 +1075,834 @@ body{
   image-rendering: auto;
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
 }
+
+/* ? misterioso */
+.hidden-qmark{
+  position: fixed;
+  z-index: 40;             /* súbelo por encima del contenido normal */
+  font-size: 18px;         /* discreto */
+  line-height: 1;
+  color: #c4b5fd;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.12;           /* casi invisible */
+  text-shadow: 0 0 6px rgba(167,139,250,.25);
+  user-select: none;
+  pointer-events: auto;
+  filter: blur(0.2px);     /* leve difuminado */
+}
+
+.hidden-qmark:hover{
+  opacity: 0.18;           /* apenas sube en desktop */
+  filter: blur(0.15px);
+}
+
+/* accesibilidad visor de pantalla (sigue igual) */
+.sr-only{
+  position:absolute;
+  width:1px;height:1px;
+  padding:0;margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+/* mobile */
+@media (max-width: 640px){
+  .hidden-qmark{ font-size: 22px; }
+}
+
+
+
+/* ====================== */
+/*   JUEGOS (layout)     */
+/* ====================== */
+/* ====================== */
+/*   JUEGOS (layout)     */
+/* ====================== */
+
+.games-bg-layer{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  padding:80px 16px 120px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  text-align:center;
+  color:#fff;
+}
+
+.games-wrapper{
+  position:relative;
+  z-index:10;
+  max-width:380px;
+  width:100%;
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:24px;
+  box-shadow:
+    0 40px 120px rgba(0,0,0,.9),
+    0 0 60px rgba(168,85,247,.4),
+    0 0 140px rgba(232,121,249,.25);
+  padding:20px 20px 24px;
+  backdrop-filter:blur(10px) saturate(140%);
+  -webkit-backdrop-filter:blur(10px) saturate(140%);
+}
+
+/* Nueva clase para ocultar la capa de los juegos */
+.games-wrapper.hidden {
+  display: none;
+}
+
+/* carta visual de cada juego */
+.game-card{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  text-align:center;
+  color:#fff;
+}
+
+.game-title{
+  font-weight:800;
+  font-size:1rem;
+  color:#fff;
+  text-shadow:
+    0 0 8px rgba(255,255,255,.6),
+    0 0 20px rgba(168,85,247,.7);
+}
+
+.game-desc{
+  font-size:.85rem;
+  line-height:1.4;
+  font-weight:500;
+  color:rgba(255,255,255,.9);
+  text-shadow:0 0 8px rgba(168,85,247,.4);
+}
+
+
+/* ========== GAME 1 drag hearts ========== */
+.drag-zone{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:20px;
+}
+.drag-hearts{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.drag-heart{
+  width:42px;
+  height:42px;
+  filter:
+    drop-shadow(0 0 8px rgba(232,121,249,.6))
+    drop-shadow(0 0 20px rgba(167,139,250,.4));
+  cursor:grab;
+}
+.drag-heart-done{
+  cursor:default;
+  filter:
+    drop-shadow(0 0 4px rgba(255,255,255,.4))
+    drop-shadow(0 0 10px rgba(168,85,247,.3));
+}
+.drop-target{
+  position:relative;
+  width:200px;
+  height:140px;
+  border-radius:20px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.8),
+    0 0 40px rgba(168,85,247,.4),
+    0 0 120px rgba(232,121,249,.2);
+}
+.drop-envelope-top{
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:50%;
+  border-radius:20px 20px 0 0;
+  background:radial-gradient(circle at 50% 20%,rgba(240,171,252,.4),rgba(124,58,237,.4) 60%,rgba(91,29,134,.7));
+  border-bottom:1px solid rgba(255,255,255,.3);
+}
+.drop-body{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding-top:40px;
+}
+.drop-msg{
+  text-align:center;
+  font-size:.9rem;
+  font-weight:600;
+  color:#fff;
+  text-shadow:0 0 10px rgba(168,85,247,.6);
+  line-height:1.4;
+}
+.drop-count{
+  font-size:.8rem;
+  color:rgba(255,255,255,.8);
+  margin-top:4px;
+}
+.drop-text{
+  font-size:1rem;
+  font-weight:700;
+}
+.drop-glow{
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  pointer-events:none;
+  box-shadow:0 0 40px rgba(232,121,249,.4),0 0 120px rgba(124,58,237,.3);
+}
+
+/* ========== GAME 2 riddle ========== */
+
+.game-question{
+  font-size:1rem;
+  font-weight:600;
+  line-height:1.4;
+  text-shadow:
+    0 0 10px rgba(255,255,255,.5),
+    0 0 30px rgba(168,85,247,.4);
+}
+
+.riddle-options{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.riddle-btn{
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.08);
+  padding:10px 14px;
+  font-weight:600;
+  font-size:.9rem;
+  color:#fff;
+  cursor:pointer;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.7),
+    0 0 20px rgba(232,121,249,.4);
+}
+.riddle-disabled{
+  opacity:.5;
+  cursor:default;
+}
+.riddle-feedback{
+  font-size:.8rem;
+  min-height:20px;
+  line-height:1.4;
+  font-weight:500;
+  color:#fff;
+  text-shadow:0 0 10px rgba(168,85,247,.4);
+}
+.riddle-correct{
+  color:#fff;
+  text-shadow:
+    0 0 10px rgba(255,255,255,.8),
+    0 0 30px rgba(236,72,153,.6),
+    0 0 60px rgba(147,51,234,.4);
+}
+.riddle-wrong{
+  color:#fda4af;
+  text-shadow:
+    0 0 6px rgba(254,202,202,.8),
+    0 0 16px rgba(244,114,182,.5);
+}
+
+/* ========== GAME 3 hangman ========== */
+
+.hang-wrapper{
+  text-align:center;
+}
+
+.hang-hint-row{
+  display:flex;
+  flex-direction:column;
+  font-size:.8rem;
+  line-height:1.4;
+  color:#fff;
+  text-shadow:0 0 10px rgba(168,85,247,.5);
+  gap:2px;
+}
+.hang-hint-label{
+  font-weight:700;
+  font-size:.8rem;
+  opacity:.8;
+  color:#fff;
+}
+.hang-hint-text{
+  font-weight:500;
+  font-size:.85rem;
+  color:rgba(255,255,255,.9);
+}
+
+.hang-word{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:.4rem;
+  font-size:1.2rem;
+  font-weight:700;
+  color:#fff;
+  margin-top:12px;
+  text-shadow:
+    0 0 8px rgba(255,255,255,.6),
+    0 0 20px rgba(168,85,247,.6);
+}
+.hang-char{
+  min-width:1ch;
+  text-align:center;
+}
+.hang-space{
+  min-width:.6rem;
+}
+
+.hang-tries{
+  margin-top:8px;
+  font-size:.8rem;
+  color:#fff;
+  opacity:.8;
+  text-shadow:0 0 8px rgba(168,85,247,.4);
+}
+
+.hang-letters{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:6px;
+}
+.hang-letter-btn{
+  min-width:28px;
+  min-height:28px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-weight:600;
+  font-size:.8rem;
+  cursor:pointer;
+  text-shadow:0 0 8px rgba(168,85,247,.4);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.7),
+    0 0 16px rgba(232,121,249,.4);
+}
+.hang-used{
+  opacity:.4;
+  cursor:default;
+}
+
+/* FINAL del juego (frase y constelación) */
+.hang-final{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+}
+.hang-final-phrase.one-line{
+  font-size:1rem;
+  line-height:1.4;
+  font-weight:600;
+  color:#fff;
+  text-align:center;
+  text-shadow:
+    0 0 12px rgba(255,255,255,.7),
+    0 0 32px rgba(232,121,249,.6);
+  margin-bottom:4px;
+  max-width:260px;
+}
+
+/* ====================== */
+/* CONSTELACIÓN HEART UI  */
+/* ====================== */
+
+.constellation-wrapper{
+  position:relative;
+  width:320px;
+  height:320px;
+  margin:0 auto;
+  border-radius:24px;
+  background:radial-gradient(
+    circle at 50% 40%,
+    rgba(24,0,40,.6) 0%,
+    rgba(5,0,10,.9) 70%
+  );
+  box-shadow:
+    0 40px 120px rgba(0,0,0,.9),
+    0 0 80px rgba(168,85,247,.4),
+    0 0 200px rgba(232,121,249,.28),
+    0 0 260px rgba(232,121,249,.15);
+  border:1px solid rgba(255,255,255,.22);
+  overflow:hidden;
+}
+
+/* glow de fondo morado */
+.constellation-halo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:200px;
+  height:200px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(
+    circle at 50% 50%,
+    rgba(232,121,249,.25) 0%,
+    rgba(0,0,0,0) 70%
+  );
+  filter:blur(30px);
+  opacity:.7;
+  pointer-events:none;
+}
+
+/* cada estrellita */
+.constellation-star{
+  position:absolute;
+  width:4px;
+  height:4px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:
+    0 0 8px rgba(255,255,255,.9),
+    0 0 20px rgba(232,121,249,.6);
+}
+
+/* líneas */
+.constellation-lines{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  filter:
+    drop-shadow(0 0 6px rgba(232,121,249,.6))
+    drop-shadow(0 0 12px rgba(168,85,247,.4));
+}
+
+/* texto del centro */
+.constellation-center{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:1.2rem;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:-0.03em;
+  text-shadow:
+    0 0 8px rgba(255,255,255,.85),
+    0 0 24px rgba(168,85,247,.9),
+    0 0 48px rgba(232,121,249,.8),
+    0 0 80px rgba(232,121,249,.4);
+}
+
+/* ====================== */
+/* BOTÓN ? secreto        */
+/* ====================== */
+.hidden-qmark{
+  position:fixed;
+  z-index:250;
+  font-size:0.4rem;
+  font-weight:800;
+  color:#fff;
+  line-height:32px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.hidden-qmark .sr-only{
+  position:absolute;
+  left:-9999px;
+  top:auto;
+  width:0.6px;
+  height:0.5px;
+  overflow:hidden;
+}
+
+/* responsive wrapper de la constelación para pantallas pequeñas */
+@media (max-width:400px){
+  .constellation-wrapper{
+    width:260px;
+    height:260px;
+  }
+}
+
+/* ========================== */
+/* OVERLAY FINAL FULLSCREEN   */
+/* ========================== */
+
+.final-overlay{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  background:
+    radial-gradient(1200px 900px at 50% 40%, rgba(16,0,30,.95) 0%, rgba(5,0,10,1) 60%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:40px 16px 80px;
+  color:#fff;
+  text-align:center;
+  overflow:hidden;
+  font-family:inherit;
+}
+
+/* estrellas mini por todo el fondo */
+.final-stars-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+.final-star{
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:
+    0 0 8px rgba(255,255,255,.9),
+    0 0 16px rgba(232,121,249,.6);
+}
+
+/* texto arriba */
+.final-headline{
+  position:relative;
+  z-index:2;
+  font-weight:700;
+  font-size:1rem;
+  line-height:1.4;
+  text-shadow:
+    0 0 12px rgba(255,255,255,.8),
+    0 0 32px rgba(168,85,247,.6);
+  margin-bottom:24px;
+  color:#fff;
+}
+
+/* contenedor del corazón grande */
+.final-heart-wrapper{
+  position:relative;
+  z-index:2;
+  width:min(500px,80vw);
+  height:min(500px,80vw);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(24,0,40,.7) 0%, rgba(5,0,10,.95) 70%);
+  box-shadow:
+    0 60px 160px rgba(0,0,0,.9),
+    0 0 80px rgba(168,85,247,.5),
+    0 0 200px rgba(232,121,249,.35),
+    0 0 260px rgba(232,121,249,.2);
+  border:1px solid rgba(255,255,255,.22);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* HEREDADO de la constelación pero adaptado */
+.constellation-halo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:260px;
+  height:260px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(
+    circle at 50% 50%,
+    rgba(232,121,249,.25) 0%,
+    rgba(0,0,0,0) 70%
+  );
+  filter:blur(40px);
+  opacity:.8;
+  pointer-events:none;
+}
+
+/* estrellitas del corazón */
+.constellation-star{
+  position:absolute;
+  width:4px;
+  height:4px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:
+    0 0 8px rgba(255,255,255,.9),
+    0 0 20px rgba(232,121,249,.6);
+}
+
+/* líneas del corazón */
+.constellation-lines{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  filter:
+    drop-shadow(0 0 6px rgba(232,121,249,.6))
+    drop-shadow(0 0 12px rgba(168,85,247,.4));
+}
+
+/* centro clickeable "K + J" */
+.constellation-center-link{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:1.4rem;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:-0.03em;
+  text-decoration:none;
+  cursor:pointer;
+  text-shadow:
+    0 0 8px rgba(255,255,255,.85),
+    0 0 24px rgba(168,85,247,.9),
+    0 0 48px rgba(232,121,249,.8),
+    0 0 80px rgba(232,121,249,.4);
+}
+
+/* capa para poder cerrar tocando el fondo si quisieras */
+.final-close-hitbox{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none; /* la dejo sin click real para que no la cierre sin querer */
+}
+
+/* responsive corazón final */
+@media (max-width:400px){
+  .final-heart-wrapper{
+    width:90vw;
+    height:90vw;
+  }
+  .constellation-center-link{
+    font-size:1.2rem;
+  }
+}
+
+/* ========================== */
+/* OVERLAY FINAL FULLSCREEN   */
+/* ========================== */
+
+.final-overlay{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  background:radial-gradient(
+    1400px 900px at 50% 40%,
+    rgba(10,0,20,0.9) 0%,
+    rgba(5,0,10,1) 60%
+  );
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:32px 16px 80px;
+  color:#fff;
+  text-align:center;
+  overflow:hidden;
+  font-family:inherit;
+}
+
+/* estrellitas chiquitas por todo el fondo */
+.final-stars-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+.final-star{
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:
+    0 0 4px rgba(255,255,255,.8),
+    0 0 12px rgba(232,121,249,.6);
+}
+
+/* glow violeta grande en el centro del universo */
+.universe-glow{
+  position:absolute;
+  left:50%;
+  top:45%;
+  width:600px;
+  height:600px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(
+    circle at 50% 50%,
+    rgba(168,85,247,.35) 0%,
+    rgba(0,0,0,0) 70%
+  );
+  filter:blur(80px);
+  opacity:.6;
+  pointer-events:none;
+  z-index:1;
+}
+
+/* texto arriba */
+.final-headline{
+  position:relative;
+  z-index:3;
+  font-weight:700;
+  font-size:1rem;
+  line-height:1.4;
+  text-shadow:
+    0 0 12px rgba(255,255,255,.9),
+    0 0 32px rgba(168,85,247,.7),
+    0 0 64px rgba(232,121,249,.5);
+  margin-bottom:24px;
+  color:#fff;
+}
+
+/* ============================= */
+/* CORAZÓN EN EL UNIVERSO (FULL) */
+/* ============================= */
+
+.heart-constellation-layer{
+  position:relative;
+  z-index:3;
+  width:100vw;
+  height:100vh;
+  pointer-events:none; /* excepto el link en el centro */
+  font-family:inherit;
+}
+
+/* halo local del corazón (pequeño glow morado justo detrás del corazón) */
+.heart-halo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:320px;
+  height:320px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(
+    circle at 50% 50%,
+    rgba(232,121,249,.3) 0%,
+    rgba(0,0,0,0) 70%
+  );
+  filter:blur(60px);
+  opacity:.9;
+  pointer-events:none;
+}
+
+/* cada estrella que forma el corazón */
+.heart-star{
+  position:absolute;
+  width:4px;
+  height:4px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:
+    0 0 8px rgba(255,255,255,1),
+    0 0 20px rgba(232,121,249,1),
+    0 0 32px rgba(168,85,247,.7);
+  /* los puntos ya tienen anim en framer */
+}
+
+/* las líneas del corazón */
+.heart-lines-svg{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100vw;
+  height:100vh;
+  pointer-events:none;
+}
+
+/* TEXTO DEL CENTRO */
+.heart-center-link{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:1.4rem;
+  font-weight:800;
+  font-family:inherit;
+  color:#fff;
+  letter-spacing:-0.03em;
+  text-decoration:none;
+  cursor:pointer;
+  line-height:1;
+  padding:8px 12px;
+  border-radius:8px;
+  pointer-events:auto; /* <- importante para que se pueda clickear */
+  text-shadow:
+    0 0 8px rgba(255,255,255,1),
+    0 0 24px rgba(232,121,249,1),
+    0 0 48px rgba(168,85,247,.8),
+    0 0 96px rgba(168,85,247,.4);
+  box-shadow:
+    0 0 20px rgba(232,121,249,.5),
+    0 0 60px rgba(168,85,247,.4);
+}
+.heart-center-link:hover{
+  filter:brightness(1.2);
+  text-shadow:
+    0 0 10px rgba(255,255,255,1),
+    0 0 32px rgba(232,121,249,1),
+    0 0 64px rgba(168,85,247,.9),
+    0 0 120px rgba(168,85,247,.6);
+}
+
+/* capa "hitbox" (opcional cerrar tocando el cielo) */
+.final-close-hitbox{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none; /* la dejo off por defecto para que no tape el link */
+}
+
+/* responsive para pantallas más pequeñas */
+@media (max-width:500px){
+  .final-headline{
+    font-size:.9rem;
+  }
+  .heart-center-link{
+    font-size:1.1rem;
+  }
+  .universe-glow{
+    width:420px;
+    height:420px;
+    filter:blur(70px);
+  }
+  .heart-halo{
+    width:240px;
+    height:240px;
+    filter:blur(50px);
+  }
+}
+
+
+.games-bg-layer {
+  transition: opacity 0.5s ease-out;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none; /* Opcional: Para asegurarse de que no se pueda interactuar con la capa oculta */
+}
+
+.hidden {
+  display: none;
+}
+
+
