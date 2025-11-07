@@ -1514,7 +1514,7 @@ body{
 .hidden-qmark{
   position:fixed;
   z-index:250;
-  font-size:0.4rem;
+  font-size:0.7rem;
   font-weight:800;
   color:#fff;
   line-height:32px;
@@ -1904,5 +1904,6 @@ body{
 .hidden {
   display: none;
 }
+
 
 
